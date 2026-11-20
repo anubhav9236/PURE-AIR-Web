@@ -1,0 +1,211 @@
+@import 'tailwindcss';
+
+/* Explicit source globs: deterministic content detection independent of the
+   repository root that happens to contain this project. */
+@source '../index.html';
+@source './**/*.{js,jsx}';
+
+@theme {
+  /* PureAir Life brand palette (preserved from the original Tailwind config) */
+  --color-pure-50: #f0fdf9;
+  --color-pure-100: #ccfbf1;
+  --color-pure-200: #99f6e4;
+  --color-pure-300: #5eead4;
+  --color-pure-400: #2dd4bf;
+  --color-pure-500: #14b8a6;
+  --color-pure-600: #0d9488;
+  --color-pure-700: #0f766e;
+  --color-pure-800: #115e59;
+  --color-pure-900: #134e4a;
+  --color-pure-950: #042f2e;
+
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Outfit', 'Inter', system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    background-color: #f8fafc;
+    color: #1e293b;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+  }
+
+  /* Prevent iOS zoom on focus for form controls (16px minimum). */
+  input,
+  select,
+  textarea {
+    font-size: max(16px, 1em);
+  }
+}
+
+@layer components {
+  /* Light theme card & panel styling */
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(226, 232, 240, 0.95);
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+  }
+
+  .glass-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+  }
+
+  /* Skip link - always reachable with the keyboard. */
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 100;
+  }
+
+  .skip-link:focus {
+    left: 0.75rem;
+    top: 0.75rem;
+    padding: 0.625rem 1rem;
+    background: #0d9488;
+    color: #ffffff;
+    border-radius: 0.75rem;
+    font-weight: 700;
+    font-size: 0.8125rem;
+    box-shadow: 0 10px 25px -5px rgba(13, 148, 136, 0.45);
+  }
+}
+
+@layer utilities {
+  /* Horizontal tab strips scroll without a visible scrollbar. */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+
+  /* Fade/slide-in used by every tab panel. */
+  .animate-fade-in {
+    animation: pureair-fade-in 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+}
+
+@keyframes pureair-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Accessible focus visible outlines */
+:focus-visible {
+  outline: 2px solid #0d9488 !important;
+  outline-offset: 2px !important;
+}
+
+/* Interactive cursor affordances */
+button,
+select,
+input,
+textarea,
+[role='button'],
+[role='tab'],
+[role='option'],
+.cursor-pointer {
+  cursor: pointer;
+}
+
+button {
+  transition:
+    transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-2px) scale(1.025);
+  box-shadow: 0 8px 20px -4px rgba(13, 148, 136, 0.22);
+}
+
+button:active {
+  transform: translateY(0) scale(0.97);
+}
+
+/* Card interactive glow highlight on cursor hover */
+.glass-card-hover,
+.interactive-card {
+  transition:
+    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.25s ease;
+}
+
+.glass-card-hover:hover,
+.interactive-card:hover {
+  transform: translateY(-3px) scale(1.01);
+  border-color: #14b8a6 !important;
+  box-shadow:
+    0 12px 28px -6px rgba(20, 184, 166, 0.16),
+    0 0 0 1px rgba(20, 184, 166, 0.25);
+}
+
+/* Cursor focus glow for inputs & selects */
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #0d9488 !important;
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.18) !important;
+  background-color: #ffffff !important;
+}
+
+/* Smooth scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #0d9488;
+}
+
+/* Respect reduced-motion preferences (WCAG 2.3.3 / vestibular safety). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  button:hover,
+  button:active,
+  .glass-card-hover:hover,
+  .interactive-card:hover {
+    transform: none !important;
+  }
+}

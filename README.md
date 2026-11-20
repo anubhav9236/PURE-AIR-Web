@@ -57,6 +57,67 @@ from the header badge - it is kept in `sessionStorage` for that tab only.
 
 ---
 
+## Deploying to Vercel
+
+The repo deploys as a **static Vite build plus one serverless function**.
+
+```
+api/gemini.js        ->  Vercel Function  ->  /api/gemini
+src/                 ->  static build      ->  dist/
+```
+
+| Request | Handling |
+|---|---|
+| `GET /api/gemini` | Provider status: `{ configured, models }` |
+| `POST /api/gemini` | `{ prompt, systemInstruction, history, imageBase64 }` -> Gemini |
+
+`api/gemini.js` is a thin adapter: it delegates to the **same**
+`server/geminiProxy.js` handler used by the Node server and the Vite dev
+server, so validation, rate limiting, timeouts, failover and error redaction
+behave identically on every host.
+
+### 1. Set the environment variable
+
+Vercel dashboard -> **PureAir-Life** -> **Settings** -> **Environment
+Variables**:
+
+| Name | Value | Scope |
+|---|---|---|
+| `GEMINI_API_KEY` | your Google AI Studio key | Production (and Preview, if wanted) |
+
+Use a **plain** name. A `VITE_`-prefixed variable is inlined into the client
+bundle and would publish the key.
+
+### 2. Push and deploy
+
+`vercel.json` pins the framework, build command and output directory, and
+rewrites the legacy `GET /api/gemini/status` path onto the function:
+
+```json
+{
+  "framework": "vite",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "rewrites": [{ "source": "/api/gemini/status", "destination": "/api/gemini" }]
+}
+```
+
+### Vercel platform limits, and how the app respects them
+
+| Limit | Value | How PureAir Life stays inside it |
+|---|---|---|
+| Request / response body | 4.5 MB | The browser downscales room photos to a 1280 px JPEG before upload; the proxy caps the body at 4 MB and answers `413` itself rather than letting the platform return an opaque `FUNCTION_PAYLOAD_TOO_LARGE`. |
+| Function duration | 300 s (Hobby, Fluid Compute) | The proxy budgets 8 s per model and 20 s for the whole failover chain, then returns a clean error so the client falls back to the local guide. |
+| Function memory | 2 GB (Hobby) | The function has **no third-party dependencies** - Node standard library only. |
+
+### Deploying the Node server instead
+
+`npm start` serves `dist/` and the proxy from one process on port 8787. It is
+not used by Vercel (which runs the serverless function), but it is the
+simplest way to self-host the same behaviour.
+
+---
+
 ## Getting started
 
 ```bash
@@ -110,12 +171,15 @@ src/
     telemetryService.js       37-city reference baseline, EPA AQI table, diurnal model
     iaqCalculatorService.js   CR-box CADR/ACH, Berkeley Earth model, mass balance
   utils/confetti.js           dependency-free canvas confetti
+api/
+  gemini.js                   Vercel serverless function -> /api/gemini
 server/
   geminiProxy.js              validation, rate limiting, failover, redaction
   index.js                    static server + security headers + proxy
 scripts/
   realign-city-aqi.mjs        regenerates city AQI/status from PM2.5
   audit-i18n.mjs              reports catalogue strings with no Hindi translation
+vercel.json                   Vercel build + rewrite configuration
 ```
 
 - **Tailwind CSS is compiled at build time** - no runtime CDN, no flash of
@@ -178,10 +242,26 @@ npm test
 The suite covers telemetry and EPA breakpoint maths, the CR-box and Berkeley
 Earth models, the indoor mass-balance model, input sanitisation (including
 that Devanagari survives), model-response schema validation, provider
-failover and fallbacks, the proxy's validation and rate limiting, secret
-scanning of both source and `dist/`, bilingual coverage of the catalogue, the
-language provider's switching and persistence, and component-level user
-journeys (navigation, language switching, city search, pledges, chat).
+failover and fallbacks, the proxy's validation, routing and rate limiting,
+secret scanning of both source and `dist/`, bilingual coverage of the
+catalogue, the language provider's switching and persistence, and
+component-level user journeys (navigation, language switching, city search,
+pledges, chat).
+
+`tests/unit/deploy.test.js` is the deployment guard. It fails the build when
+the repository would break a host:
+
+- a required module (`src/main.jsx`, `server/geminiProxy.js`, `api/gemini.js`,
+  `vercel.json`, ...) is missing;
+- `index.html` points at an entry module that does not exist;
+- a file imports a package that is not declared in `package.json`, or a
+  package that cannot be resolved;
+- a `node <file>` npm script points at a file that does not exist;
+- `vercel.json` is misconfigured;
+- `.gitignore` would exclude `src`, `server`, `api`, `tests` or `scripts` -
+  the mistake that produced an empty repository and a *"Module not found"*
+  build failure;
+- a key-shaped string appears anywhere in the source tree.
 
 ### Manual intervention required
 
