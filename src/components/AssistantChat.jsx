@@ -237,7 +237,7 @@ export default function AssistantChat({ hotspot }) {
                   className={`max-w-[85%] sm:max-w-[78%] rounded-2xl p-4 text-xs sm:text-sm leading-relaxed ${
                     isBot
                       ? 'bg-slate-50 border border-slate-200 text-slate-800'
-                      : 'bg-teal-600 text-white shadow-sm'
+                      : 'bg-teal-700 text-white shadow-sm'
                   }`}
                 >
                   <span className="sr-only">
@@ -361,7 +361,7 @@ export default function AssistantChat({ hotspot }) {
             type="submit"
             disabled={!input.trim() || loading}
             aria-label={t('chat.send')}
-            className="px-5 py-3 rounded-2xl font-bold bg-teal-600 hover:bg-teal-700 text-white transition flex items-center justify-center gap-1.5 disabled:opacity-50 shadow-sm"
+            className="px-5 py-3 rounded-2xl font-bold bg-teal-700 hover:bg-teal-800 text-white transition flex items-center justify-center gap-1.5 disabled:opacity-50 shadow-sm"
           >
             <Send className="w-4 h-4" aria-hidden="true" />
             <span className="hidden sm:inline">{t('chat.send')}</span>

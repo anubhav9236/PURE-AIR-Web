@@ -2,6 +2,26 @@ import { useCallback, useEffect, useRef } from 'react';
 import { X } from 'lucide-react';
 
 /**
+ * Decide whether an element can currently receive keyboard focus.
+ *
+ * `offsetParent` is the usual shortcut, but it is `null` for every
+ * `position: fixed` descendant and it is not implemented at all in jsdom, so
+ * the focus trap silently stopped working. The computed style check works in
+ * both environments and still skips genuinely hidden controls.
+ *
+ * @param {HTMLElement} element
+ * @returns {boolean}
+ */
+function isFocusable(element) {
+  if (element === document.activeElement) return true;
+  if (element.hasAttribute('hidden')) return false;
+  if (element.getAttribute('aria-hidden') === 'true') return false;
+
+  const style = window.getComputedStyle(element);
+  return style.display !== 'none' && style.visibility !== 'hidden';
+}
+
+/**
  * Accessible modal dialog with focus trapping and focus restoration.
  *
  * Implements the WAI-ARIA dialog pattern: focus moves into the dialog on
@@ -42,7 +62,7 @@ export default function Modal({
 
       const focusables = Array.from(
         dialogRef.current.querySelectorAll(focusableSelector)
-      ).filter((el) => el.offsetParent !== null || el === document.activeElement);
+      ).filter((el) => isFocusable(el));
 
       if (focusables.length === 0) return;
 

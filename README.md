@@ -142,14 +142,29 @@ npm run dev                   # http://localhost:5173
 | `npm run build` | Production build into `dist/` (Tailwind compiled, code-split). |
 | `npm start` | Serves `dist/` with security headers and the Gemini proxy. |
 | `npm run preview` | Vite's own preview server. |
-| `npm test` | Vitest unit, integration and component suite. |
-| `npm run test:coverage` | Same suite with a coverage report. |
+| `npm test` | Vitest unit, integration, component and accessibility suite. |
+| `npm run test:coverage` | Same suite with a coverage report and enforced thresholds. |
 | `npm run lint` | oxlint. |
-| `npm run check` | lint + test + build + i18n coverage audit. |
+| `npm run check` | The full gate: lint + coverage + build + i18n audit + catalogue report. |
 | `npm run audit:i18n` | Checks every catalogue string has a Hindi translation. |
 | `npm run audit:city` | Regenerates city AQI from PM2.5 using the EPA breakpoint table. |
 | `npm run report:catalogue` | Catalogue inventory: AQI/PM2.5 consistency + translation coverage. |
 | `node tests/run_tests.js` | Live-provider connectivity diagnostic (no key required). |
+
+### Quality gate
+
+`npm run check` is the single command that must stay green. It runs, in order:
+
+| Step | Gate |
+|---|---|
+| `lint` | oxlint reports no error and no warning. |
+| `test:coverage` | 307 tests pass and coverage stays above the floors in `vitest.config.js` (80% statements, 75% branches, 78% functions, 84% lines). |
+| `build` | The production Vite build succeeds. |
+| `audit:i18n` | Every catalogue string has a Hindi translation. |
+| `report:catalogue` | Every city's stored AQI matches its PM2.5, and every catalogue string is translated. |
+
+The maintenance scripts **import** the application modules rather than parsing
+the source text, so a report can never drift from the running code.
 
 ---
 
@@ -161,14 +176,17 @@ src/
   components/                 Navbar, Dashboard, Planner, Scanner, HackLab, ImpactLedger,
                               AssistantChat, Modal, Provenance, ErrorBoundary
   i18n/
-    strings.js                UI chrome string table (EN/HI)
+    strings.js                facade over the per-domain UI string table (EN/HI)
+    strings/                  app, nav, ai, dash, planner, scanner, hacklab, impact, chat
     phrases.js                Hindi translations for the catalogue's descriptive data
     LanguageProvider.jsx      language state, <html lang>, persistence
     languageContext.js        context + storage helpers
   services/
-    geminiService.js          provider transport, sanitisation, schema validation
+    geminiService.js          facade over the Gemini modules
+    gemini/                   sessionKey, sanitize, transport, validation, workflows
     localGuide.js             bilingual offline knowledge base
-    telemetryService.js       37-city reference baseline, EPA AQI table, diurnal model
+    telemetryService.js       facade over the telemetry modules
+    telemetry/                cityCatalogue, aqi, vulnerableProfiles
     iaqCalculatorService.js   CR-box CADR/ACH, Berkeley Earth model, mass balance
   utils/confetti.js           dependency-free canvas confetti
 api/
@@ -179,9 +197,19 @@ server/
 scripts/
   realign-city-aqi.mjs        regenerates city AQI/status from PM2.5
   audit-i18n.mjs              reports catalogue strings with no Hindi translation
+  report-catalogue.mjs        catalogue inventory and consistency report
+tests/
+  unit/                       pure logic, security, deployment guard
+  components/                 user journeys through the real components
+  accessibility/              axe-core audits + the WCAG contrast guard
 vercel.json                   Vercel build + rewrite configuration
 ```
 
+- **Large modules are split behind stable facades.** `telemetryService.js`,
+  `geminiService.js` and `strings.js` stay the public entry points; the
+  implementation lives in focused sub-modules. Every call site keeps working,
+  and `tests/unit/deploy.test.js` fails the build if a module under `src/` is
+  ever left unreferenced - dead code cannot creep back in.
 - **Tailwind CSS is compiled at build time** - no runtime CDN, no flash of
   unstyled content, and a strict Content-Security-Policy without
   `unsafe-inline` for scripts.
@@ -197,8 +225,10 @@ vercel.json                   Vercel build + rewrite configuration
 The language switch in the header swaps the entire interface, not just the
 headings:
 
-- `src/i18n/strings.js` holds the UI chrome - every key carries both an
-  English and a Hindi value, and an unknown key degrades to English rather
+- `src/i18n/strings/` holds the UI chrome, one module per domain (`app`,
+  `nav`, `ai`, `dash`, `planner`, `scanner`, `hacklab`, `impact`, `chat`);
+  `src/i18n/strings.js` is the facade that merges them. Every key carries both
+  an English and a Hindi value, and an unknown key degrades to English rather
   than rendering blank.
 - `src/i18n/phrases.js` holds the Hindi translations for the *data* strings the
   catalogue ships with: haze descriptors, inversion physics, AQI category
@@ -239,13 +269,13 @@ invents live readings or statistics.
 npm test
 ```
 
-The suite covers telemetry and EPA breakpoint maths, the CR-box and Berkeley
-Earth models, the indoor mass-balance model, input sanitisation (including
-that Devanagari survives), model-response schema validation, provider
-failover and fallbacks, the proxy's validation, routing and rate limiting,
-secret scanning of both source and `dist/`, bilingual coverage of the
-catalogue, the language provider's switching and persistence, and
-component-level user journeys (navigation, language switching, city search,
+The suite is 307 tests across 22 files and covers telemetry and EPA breakpoint
+maths, the CR-box and Berkeley Earth models, the indoor mass-balance model,
+input sanitisation (including that Devanagari survives), model-response schema
+validation, provider failover and fallbacks, the proxy's validation, routing
+and rate limiting, secret scanning of both source and `dist/`, bilingual
+coverage of the catalogue, the language provider's switching and persistence,
+and component-level user journeys (navigation, language switching, city search,
 pledges, chat).
 
 `tests/unit/deploy.test.js` is the deployment guard. It fails the build when
@@ -261,7 +291,9 @@ the repository would break a host:
 - `.gitignore` would exclude `src`, `server`, `api`, `tests` or `scripts` -
   the mistake that produced an empty repository and a *"Module not found"*
   build failure;
-- a key-shaped string appears anywhere in the source tree.
+- a key-shaped string appears anywhere in the source tree;
+- a module under `src/` is not reachable from `src/main.jsx` - dead code is a
+  build failure.
 
 ### Manual intervention required
 
@@ -286,3 +318,23 @@ controls, an ARIA tablist with arrow-key navigation and roving tabindex,
 conversation, text alternatives for the chart, colour contrast raised to
 AA-compliant levels, and a `prefers-reduced-motion` block that disables the
 transform animations.
+
+Accessibility is **verified, not asserted**:
+
+- `tests/accessibility/workspaces.test.js` runs **axe-core** against every one
+  of the six workspaces and the application shell, and fails on any violation.
+  A companion test proves the harness really detects a deliberate violation,
+  so the suite cannot pass vacuously.
+- `tests/accessibility/contrast.test.js` computes the WCAG contrast ratio for
+  the colour pairs the interface uses, because jsdom has no layout engine and
+  cannot evaluate colour contrast. It also fails the build if white text is
+  ever placed back on `teal-600` or on a translucent white chip - the two
+  combinations that used to miss AA.
+- The same axe-core audit was run against the built application in a real
+  browser, at every scroll position of every workspace, and reports **zero**
+  violations - including colour contrast, which only a real browser can check.
+- `label-content-name-mismatch` is handled properly: each control's accessible
+  name contains its visible label, so a screen-reader user hears the same words
+  a sighted user reads.
+- Scrollable regions are keyboard reachable, and the modal traps focus while
+  it is open.

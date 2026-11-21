@@ -8,21 +8,10 @@
  */
 
 import { readFileSync, writeFileSync } from 'node:fs';
+import { calculateAQIFromPM25 } from '../src/services/telemetry/aqi.js';
 
-const FILE = 'src/services/telemetryService.js';
+const FILE = 'src/services/telemetry/cityCatalogue.js';
 
-function calculateAQIFromPM25(pm25) {
-  const value = Number(pm25);
-  if (!Number.isFinite(value) || value <= 0) return 0;
-  if (value <= 12.0) return Math.round((50 / 12.0) * value);
-  if (value <= 35.4) return Math.round(((100 - 51) / (35.4 - 12.1)) * (value - 12.1) + 51);
-  if (value <= 55.4) return Math.round(((150 - 101) / (55.4 - 35.5)) * (value - 35.5) + 101);
-  if (value <= 150.4) return Math.round(((200 - 151) / (150.4 - 55.5)) * (value - 55.5) + 151);
-  if (value <= 250.4) return Math.round(((300 - 201) / (250.4 - 150.5)) * (value - 150.5) + 201);
-  if (value <= 350.4) return Math.round(((400 - 301) / (350.4 - 250.5)) * (value - 250.5) + 301);
-  if (value <= 500.4) return Math.round(((500 - 401) / (500.4 - 350.5)) * (value - 350.5) + 401);
-  return 500;
-}
 
 const STATUS_BY_CATEGORY = {
   Good: 'Good',

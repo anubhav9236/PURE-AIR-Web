@@ -209,7 +209,7 @@ export default function SmogShieldDashboard({
               <button
                 type="button"
                 onClick={onNavigateToPlanner}
-                className="flex-1 py-2.5 px-4 rounded-xl font-bold text-xs sm:text-sm bg-teal-600 text-white hover:bg-teal-700 transition flex items-center justify-center gap-1.5 shadow-sm shadow-teal-600/20"
+                className="flex-1 py-2.5 px-4 rounded-xl font-bold text-xs sm:text-sm bg-teal-700 text-white hover:bg-teal-800 transition flex items-center justify-center gap-1.5 shadow-sm shadow-teal-700/20"
               >
                 <Sparkles className="w-4 h-4" aria-hidden="true" />
                 <span>{t('dash.generateRoutine')}</span>
@@ -259,7 +259,12 @@ export default function SmogShieldDashboard({
           </div>
         </div>
 
-        <div className="relative w-full overflow-x-auto pb-2">
+        <div
+          role="group"
+          aria-label={t('dash.diurnalRegion')}
+          tabIndex={0}
+          className="relative w-full overflow-x-auto pb-2 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500"
+        >
           <div className="min-w-[680px]">
             <div
               role="img"
@@ -377,7 +382,7 @@ export default function SmogShieldDashboard({
                   onClick={() => setSelectedVulnerability(key)}
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 cursor-pointer ${
                     isSelected
-                      ? 'bg-teal-600 text-white shadow-md'
+                      ? 'bg-teal-700 text-white shadow-md'
                       : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200/80'
                   }`}
                 >

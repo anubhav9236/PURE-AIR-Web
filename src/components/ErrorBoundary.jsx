@@ -38,7 +38,7 @@ export default class ErrorBoundary extends React.Component {
             </p>
             <button
               onClick={this.handleReset}
-              className="px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition flex items-center justify-center gap-2 mx-auto cursor-pointer shadow-md"
+              className="px-5 py-2.5 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold transition flex items-center justify-center gap-2 mx-auto cursor-pointer shadow-md"
             >
               <RotateCcw className="w-4 h-4" />
               <span>Reload Application</span>

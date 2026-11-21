@@ -212,7 +212,7 @@ export default function IAQRoomScanner({ hotspot }) {
             type="button"
             onClick={handleRunAudit}
             disabled={loading}
-            className="px-6 py-3.5 rounded-2xl font-bold text-sm bg-teal-600 hover:bg-teal-700 text-white transition flex items-center justify-center gap-2 shadow-md shadow-teal-600/20 disabled:opacity-60 disabled:cursor-not-allowed shrink-0"
+            className="px-6 py-3.5 rounded-2xl font-bold text-sm bg-teal-700 hover:bg-teal-800 text-white transition flex items-center justify-center gap-2 shadow-md shadow-teal-700/20 disabled:opacity-60 disabled:cursor-not-allowed shrink-0"
           >
             {loading ? (
               <>
@@ -374,7 +374,7 @@ export default function IAQRoomScanner({ hotspot }) {
                 type="button"
                 onClick={handleRunAudit}
                 disabled={loading}
-                className="mt-6 px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-teal-600 hover:bg-teal-700 text-white transition shadow-sm disabled:opacity-60"
+                className="mt-6 px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-teal-700 hover:bg-teal-800 text-white transition shadow-sm disabled:opacity-60"
               >
                 {loading ? t('scanner.analyzing') : t('scanner.emptyCta')}
               </button>

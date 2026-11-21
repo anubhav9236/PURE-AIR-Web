@@ -14,30 +14,76 @@ function readSourceFiles() {
   const roots = ['src', 'server', 'api', 'scripts'];
   const files = [];
 
-  for (const dir of roots) {
-    const abs = path.join(root, dir);
-    if (!fs.existsSync(abs)) continue;
+  const walk = (relative) => {
+    const abs = path.join(root, relative);
+    if (!fs.existsSync(abs)) return;
+
     for (const entry of fs.readdirSync(abs, { withFileTypes: true })) {
       const full = path.join(abs, entry.name);
+      const rel = path.join(relative, entry.name);
       if (entry.isDirectory()) {
-        for (const child of fs.readdirSync(full, { withFileTypes: true })) {
-          if (child.isFile() && /\.(js|jsx|mjs)$/.test(child.name)) {
-            files.push({
-              file: path.join(dir, entry.name, child.name),
-              source: fs.readFileSync(path.join(full, child.name), 'utf8')
-            });
-          }
-        }
+        walk(rel);
       } else if (/\.(js|jsx|mjs)$/.test(entry.name)) {
-        files.push({ file: path.join(dir, entry.name), source: fs.readFileSync(full, 'utf8') });
+        files.push({ file: rel, source: fs.readFileSync(full, 'utf8') });
       }
     }
-  }
+  };
+
+  for (const dir of roots) walk(dir);
 
   return files;
 }
 
 const files = readSourceFiles();
+
+/**
+ * Collect every relative import specifier used by a file.
+ *
+ * @param {string} source
+ * @returns {string[]}
+ */
+function relativeSpecifiers(source) {
+  const code = stripComments(source);
+  const specifiers = new Set();
+  const patterns = [
+    /\bfrom\s+['"](\.[^'"]+)['"]/g,
+    /\bimport\s+['"](\.[^'"]+)['"]/g,
+    /\bimport\s*\(\s*['"](\.[^'"]+)['"]\s*\)/g,
+    /\brequire\s*\(\s*['"](\.[^'"]+)['"]\s*\)/g
+  ];
+
+  for (const pattern of patterns) {
+    for (const match of code.matchAll(pattern)) specifiers.add(match[1]);
+  }
+
+  return [...specifiers];
+}
+
+/**
+ * Resolve a relative import specifier to a repository-relative file path.
+ *
+ * @param {string} importer repo-relative path of the importing file
+ * @param {string} specifier
+ * @returns {string|null} null when the target does not exist
+ */
+function resolveRelative(importer, specifier) {
+  const base = path.resolve(path.dirname(path.join(root, importer)), specifier);
+  const candidates = [
+    base,
+    `${base}.js`,
+    `${base}.jsx`,
+    path.join(base, 'index.js'),
+    path.join(base, 'index.jsx')
+  ];
+
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate) && fs.statSync(candidate).isFile()) {
+      return path.relative(root, candidate);
+    }
+  }
+
+  return null;
+}
 
 /**
  * Extract the package name from a bare-module specifier.
@@ -201,6 +247,32 @@ describe('Deployment integrity', () => {
       .map(({ file }) => file);
 
     expect(offenders).toEqual([]);
+  });
+
+  it('has no unreachable module in the source tree', () => {
+    const entry = path.join('src', 'main.jsx');
+    const reachable = new Set([entry]);
+    const queue = [entry];
+
+    while (queue.length > 0) {
+      const current = queue.pop();
+      const absolute = path.join(root, current);
+      if (!fs.existsSync(absolute)) continue;
+
+      const source = fs.readFileSync(absolute, 'utf8');
+      for (const specifier of relativeSpecifiers(source)) {
+        const resolved = resolveRelative(current, specifier);
+        if (!resolved || reachable.has(resolved)) continue;
+        reachable.add(resolved);
+        queue.push(resolved);
+      }
+    }
+
+    const orphans = files
+      .map(({ file }) => file)
+      .filter((file) => file.startsWith(`src${path.sep}`) && !reachable.has(file));
+
+    expect(orphans).toEqual([]);
   });
 });
 

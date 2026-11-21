@@ -149,7 +149,7 @@ export default function Navbar({
           <button
             type="button"
             onClick={() => setActiveTab('dashboard')}
-            aria-label={t('nav.home')}
+            aria-label={`${t('app.brand')}. ${t('app.allIndiaCities')} (${hotspots.length}). ${t('app.tagline')}. ${t('nav.home')}`}
             className="flex items-center gap-3 group text-left cursor-pointer border-0 bg-transparent p-0 shrink-0"
           >
             <div className="relative flex items-center justify-center w-11 h-11 rounded-2xl bg-gradient-to-tr from-teal-500 to-emerald-400 text-white shadow-md shadow-teal-500/20 group-hover:shadow-teal-500/40 transition-all">
@@ -177,14 +177,14 @@ export default function Navbar({
                 aria-haspopup="listbox"
                 aria-expanded={isCityDropdownOpen}
                 aria-controls={`${searchId}-listbox`}
-                aria-label={`${t('nav.selectCity')}. ${t('nav.currentlySelected')}: ${selectedHotspot.name}, AQI ${selectedHotspot.aqi}`}
+                aria-label={`${selectedHotspot.name} AQI ${selectedHotspot.aqi} • ${selectedHotspot.state || 'India'}. ${t('nav.selectCity')}. ${t('nav.currentlySelected')}: ${selectedHotspot.name}, AQI ${selectedHotspot.aqi}`}
                 className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200/80 border border-slate-200 hover:border-teal-400 transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer text-left"
               >
                 <MapPin className="w-4 h-4 text-teal-600 shrink-0" aria-hidden="true" />
                 <div className="leading-tight">
                   <span className="text-xs sm:text-sm font-bold text-slate-900 block">
                     {selectedHotspot.name}
-                  </span>
+                  </span>{' '}
                   <span className="text-[11px] text-teal-800 font-semibold block">
                     AQI {selectedHotspot.aqi} • {selectedHotspot.state || 'India'}
                   </span>
@@ -359,7 +359,7 @@ export default function Navbar({
                   onClick={() => setActiveTab(item.id)}
                   className={`flex items-center gap-1.5 px-3.5 py-2 text-xs sm:text-sm font-semibold rounded-xl whitespace-nowrap transition-all duration-200 cursor-pointer ${
                     isActive
-                      ? 'bg-teal-600 text-white shadow-md shadow-teal-600/30'
+                      ? 'bg-teal-700 text-white shadow-md shadow-teal-700/30'
                       : 'text-slate-700 hover:text-slate-900 hover:bg-slate-100 border border-transparent'
                   }`}
                 >
@@ -367,7 +367,7 @@ export default function Navbar({
                   {item.badge && (
                     <span
                       className={`px-1.5 py-0.2 text-[10px] font-bold uppercase rounded-md ${
-                        isActive ? 'bg-white/20 text-white' : 'bg-teal-100 text-teal-900'
+                        isActive ? 'bg-teal-900 text-white' : 'bg-teal-100 text-teal-900'
                       }`}
                     >
                       {item.badge}
@@ -455,7 +455,7 @@ export default function Navbar({
             <button
               type="button"
               onClick={handleSaveKey}
-              className="px-4 py-2.5 rounded-xl text-xs font-bold bg-teal-600 hover:bg-teal-700 text-white transition"
+              className="px-4 py-2.5 rounded-xl text-xs font-bold bg-teal-700 hover:bg-teal-800 text-white transition"
             >
               {t('ai.saveKey')}
             </button>

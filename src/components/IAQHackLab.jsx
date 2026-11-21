@@ -145,7 +145,7 @@ export default function IAQHackLab({ hotspot }) {
                     onClick={() => setFanSpeed(speed)}
                     className={`py-2 rounded-xl font-bold uppercase transition ${
                       fanSpeed === speed
-                        ? 'bg-teal-600 text-white shadow-sm'
+                        ? 'bg-teal-700 text-white shadow-sm'
                         : 'bg-white text-slate-800 border border-slate-300 hover:border-slate-400'
                     }`}
                   >
@@ -180,7 +180,7 @@ export default function IAQHackLab({ hotspot }) {
                     onClick={() => setFilterCount(item.count)}
                     className={`py-2 px-1 text-center rounded-xl font-bold transition ${
                       filterCount === item.count
-                        ? 'bg-teal-600 text-white shadow-sm'
+                        ? 'bg-teal-700 text-white shadow-sm'
                         : 'bg-white text-slate-800 border border-slate-300 hover:border-slate-400'
                     }`}
                   >
@@ -209,7 +209,7 @@ export default function IAQHackLab({ hotspot }) {
                     onClick={() => setFilterRating(item.id)}
                     className={`p-2 rounded-xl text-center font-bold transition ${
                       filterRating === item.id
-                        ? 'bg-teal-600 text-white shadow-sm'
+                        ? 'bg-teal-700 text-white shadow-sm'
                         : 'bg-white text-slate-800 border border-slate-300 hover:border-slate-400'
                     }`}
                   >
@@ -427,7 +427,7 @@ export default function IAQHackLab({ hotspot }) {
                 onClick={() => setSealLevel(option.id)}
                 className={`px-3 py-2 rounded-xl text-[11px] font-bold border transition ${
                   sealLevel === option.id
-                    ? 'bg-teal-600 text-white border-teal-600'
+                    ? 'bg-teal-700 text-white border-teal-700'
                     : 'bg-white text-slate-800 border-slate-300 hover:border-teal-400 hover:bg-slate-50'
                 }`}
               >
