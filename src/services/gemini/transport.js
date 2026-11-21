@@ -204,7 +204,8 @@ async function callDirect(request, apiKey) {
         continue;
       }
       if (response.status === 429) lastReason = 'rate_limited';
-      else if (response.status === 401 || response.status === 403) lastReason = 'provider_auth_failed';
+      else if (response.status === 401 || response.status === 403)
+        lastReason = 'provider_auth_failed';
       else lastReason = 'provider_unavailable';
     } catch (error) {
       lastReason = error?.name === 'AbortError' ? 'provider_timeout' : 'provider_network_error';

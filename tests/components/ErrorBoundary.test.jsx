@@ -48,7 +48,7 @@ describe('ErrorBoundary', () => {
     // jsdom forbids real navigation, so stub the reload side effect.
     Object.defineProperty(window, 'location', {
       configurable: true,
-      value: { ...window.location, reload },
+      value: { ...window.location, reload }
     });
 
     render(

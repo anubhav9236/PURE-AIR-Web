@@ -77,7 +77,9 @@ describe('Navbar', () => {
     const setActiveTab = vi.fn();
     renderNavbar({ setActiveTab });
 
-    await user.click(within(screen.getByRole('tablist')).getByRole('tab', { name: /clean air ai/i }));
+    await user.click(
+      within(screen.getByRole('tablist')).getByRole('tab', { name: /clean air ai/i })
+    );
     expect(setActiveTab).toHaveBeenCalledWith('chat');
   });
 
@@ -127,9 +129,9 @@ describe('Navbar', () => {
     renderNavbar({ onSelectHotspot });
 
     await user.click(screen.getByRole('button', { name: /select city/i }));
-    const target = screen.getAllByRole('option').find(
-      (option) => option.textContent.includes(HOTSPOTS[1].name)
-    );
+    const target = screen
+      .getAllByRole('option')
+      .find((option) => option.textContent.includes(HOTSPOTS[1].name));
     await user.click(target);
 
     expect(onSelectHotspot).toHaveBeenCalledWith(HOTSPOTS[1]);

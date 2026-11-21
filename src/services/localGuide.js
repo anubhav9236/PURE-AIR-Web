@@ -95,11 +95,7 @@ export function generateLocalFallbackRoutine(profile, aqi, lang = 'en') {
         'Solar Boundary Layer Safe Dispersal Window',
         'धूप से बनी सुरक्षित हवा-प्रसार अवधि'
       ),
-      hazardLevel: t(
-        lang,
-        'Low to Moderate (Optimal Window)',
-        'कम से मध्यम (सर्वोत्तम अवधि)'
-      ),
+      hazardLevel: t(lang, 'Low to Moderate (Optimal Window)', 'कम से मध्यम (सर्वोत्तम अवधि)'),
       action: t(
         lang,
         'This is your clean air activity window. Solar radiation has broken the ground temperature inversion, lifting the atmospheric lid. Run grocery errands and let children engage in moderate outdoor play.',
@@ -128,11 +124,7 @@ export function generateLocalFallbackRoutine(profile, aqi, lang = 'en') {
         'Evening Temperature Inversion & Commute Rebound',
         'शाम का तापमान उलटना और यात्रा का दोबारा बढ़ना'
       ),
-      hazardLevel: t(
-        lang,
-        'Severe Smog Rebound',
-        'गंभीर धुएँ की वापसी'
-      ),
+      hazardLevel: t(lang, 'Severe Smog Rebound', 'गंभीर धुएँ की वापसी'),
       action: t(
         lang,
         'Commute home with windows rolled completely up. As soon as you enter, take off outdoor shoes at the door, rinse eyes with saline mist, and change into clean indoor clothes.',
@@ -161,11 +153,7 @@ export function generateLocalFallbackRoutine(profile, aqi, lang = 'en') {
         'Low-Emission Cooking & Overnight Bedroom Seal',
         'कम-प्रदूषण रसोई और रात भर के कमरे की सील'
       ),
-      hazardLevel: t(
-        lang,
-        'Controlled Indoor Air',
-        'नियंत्रित indoor हवा'
-      ),
+      hazardLevel: t(lang, 'Controlled Indoor Air', 'नियंत्रित indoor हवा'),
       action: t(
         lang,
         'Cook with lids tightly on pans; avoid dry roasting chilies or high-smoke oil tadka without active exterior extraction.',
@@ -217,7 +205,12 @@ export function generateLocalFallbackRoutine(profile, aqi, lang = 'en') {
 export function generateLocalFallbackVisionAudit(roomType, notes, lang = 'en') {
   return {
     roomDetected:
-      roomType || t(lang, 'Living room / bedroom window & ventilation area', 'बैठक / बेडरूम की खिड़की और हवा का क्षेत्र'),
+      roomType ||
+      t(
+        lang,
+        'Living room / bedroom window & ventilation area',
+        'बैठक / बेडरूम की खिड़की और हवा का क्षेत्र'
+      ),
     leakageRiskScore: 74,
     primaryVulnerabilities: [
       t(
@@ -254,11 +247,7 @@ export function generateLocalFallbackVisionAudit(roomType, notes, lang = 'en') {
       },
       {
         step: 2,
-        title: t(
-          lang,
-          'Thermal bubble-wrap glazing hack',
-          'बुलबुला रैपर से थर्मल ग्लेज़िंग का फ़ायदा'
-        ),
+        title: t(lang, 'Thermal bubble-wrap glazing hack', 'बुलबुला रैपर से थर्मल ग्लेज़िंग का फ़ायदा'),
         diyFix: t(
           lang,
           'Lightly mist single-pane glass with water and press clean bubble wrap (bubbles facing the glass). It acts as double glazing, stopping drafts and condensation.',
@@ -361,7 +350,12 @@ export function generateLocalFallbackChat(query, hotspot, lang = 'en') {
       : `A Corsi-Rosenthal (CR) box is built using a 20-inch box fan and 4 or 5 MERV 13 furnace filters (20"x20"x2" or 1") taped together with duct tape. Adding a circular cardboard shroud with a 15-inch opening over the fan face boosts airflow efficiency by about 35%. It delivers roughly 600-750 CFM CADR for around ₹4,500 (~$65), outperforming commercial HEPA purifiers that cost ₹35,000+.`;
   }
 
-  if (qLower.includes('transport') || qLower.includes('travel') || qLower.includes('यातायात') || qLower.includes('यात्रा')) {
+  if (
+    qLower.includes('transport') ||
+    qLower.includes('travel') ||
+    qLower.includes('यातायात') ||
+    qLower.includes('यात्रा')
+  ) {
     return isHindi
       ? `परिवहन के कम-प्रदूषण विकल्प, घटते क्रम में: मेट्रो/मेट्रो-लाइट रेल, साइकिल या पैदल यात्रा, बस, EV (इलेक्ट्रिक वाहन), कारपूल, और सबसे आख़िर में एकल-यात्री कार (जहाँ दो-चक्र वाहन और सार्वजनिक परिवहन न हो)। गैसोलिन की कार की तुलना में EV हर किलोमीटर पर लगभग 40-60% कम ग्रीनहाउस गैस उत्सर्जित करता है, और मेट्रो वाहनों की तुलना में सबसे कम प्रदूषण करती है।`
       : `Lowest-emission transport options, in order: metro or metro-rail, walking and cycling, bus, electric vehicles, car-pooling, and single-occupant petrol cars only as a last resort. An EV emits roughly 40-60% less greenhouse gas per kilometre than a petrol car, and public transport beats private vehicles for both carbon and local particulate exposure.`;

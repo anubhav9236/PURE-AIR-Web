@@ -29,8 +29,7 @@ describe('Translation table', () => {
     // its Hindi value is English by design.
     const languageToggleKeys = new Set(['nav.switchToHindi']);
     const offenders = keys.filter(
-      (key) =>
-        !languageToggleKeys.has(key) && !/[\u0900-\u097F]/.test(STRINGS[key].hi)
+      (key) => !languageToggleKeys.has(key) && !/[\u0900-\u097F]/.test(STRINGS[key].hi)
     );
     expect(offenders).toEqual([]);
   });
@@ -85,12 +84,20 @@ describe('Offline clean-air guide', () => {
   });
 
   it('answers the indoor air quality scenario', () => {
-    const answer = generateLocalFallbackChat('How can I improve indoor air quality?', HOTSPOT, 'en');
+    const answer = generateLocalFallbackChat(
+      'How can I improve indoor air quality?',
+      HOTSPOT,
+      'en'
+    );
     expect(answer).toMatch(/CR box|Corsi|MERV/i);
   });
 
   it('answers the eco-friendly routine scenario', () => {
-    const answer = generateLocalFallbackChat('Suggest an eco-friendly daily routine.', HOTSPOT, 'en');
+    const answer = generateLocalFallbackChat(
+      'Suggest an eco-friendly daily routine.',
+      HOTSPOT,
+      'en'
+    );
     expect(answer.length).toBeGreaterThan(80);
   });
 

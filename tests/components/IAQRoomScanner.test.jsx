@@ -113,7 +113,9 @@ describe('IAQRoomScanner', () => {
   it('renders an empty state before an audit runs', () => {
     stubProvider(AUDIT_PAYLOAD);
     renderScanner();
-    expect(screen.getByRole('heading', { name: /no iaq audit performed yet/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: /no iaq audit performed yet/i })
+    ).toBeInTheDocument();
   });
 
   it('exposes the upload control and the room context fields', () => {
@@ -268,10 +270,14 @@ describe('IAQRoomScanner', () => {
       expect(screen.getAllByRole('button', { name: /analysing|analyzing/i })[0]).toBeDisabled();
     });
 
-    expect(screen.queryByRole('heading', { name: 'Living room sliding window' })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('heading', { name: 'Living room sliding window' })
+    ).not.toBeInTheDocument();
 
     release();
-    expect(await screen.findByRole('heading', { name: 'Living room sliding window' })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: 'Living room sliding window' })
+    ).toBeInTheDocument();
   });
 
   it('downscales a large photo before it is uploaded', async () => {

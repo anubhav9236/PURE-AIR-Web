@@ -43,10 +43,7 @@ export default function LanguageProvider({ children }) {
 
   const t = useCallback((key, fallback) => translate(lang, key, fallback), [lang]);
 
-  const value = useMemo(
-    () => ({ lang, setLang, toggleLang, t }),
-    [lang, setLang, toggleLang, t]
-  );
+  const value = useMemo(() => ({ lang, setLang, toggleLang, t }), [lang, setLang, toggleLang, t]);
 
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
 }

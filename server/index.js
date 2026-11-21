@@ -45,7 +45,14 @@ const MIME_TYPES = {
 };
 
 const COMPRESSIBLE = new Set([
-  '.html', '.js', '.mjs', '.css', '.json', '.svg', '.txt', '.webmanifest'
+  '.html',
+  '.js',
+  '.mjs',
+  '.css',
+  '.json',
+  '.svg',
+  '.txt',
+  '.webmanifest'
 ]);
 
 /**
@@ -64,7 +71,7 @@ const CSP = [
   "base-uri 'self'",
   "form-action 'self'",
   "object-src 'none'",
-  "upgrade-insecure-requests"
+  'upgrade-insecure-requests'
 ].join('; ');
 
 /**

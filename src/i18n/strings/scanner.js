@@ -92,7 +92,7 @@ export const scannerStrings = {
     en: 'Optimal breathing-zone placement',
     hi: 'साँस की ज़ोन में सही जगह'
   },
-  'scanner.expected': { en: 'Expected improvement', hi: 'अपेक्षित सुधार' },
+  'scanner.expected': { en: 'Expected improvement', hi: 'अपेक्षित सुधार' }
 
   // ---- Hack Lab ---------------------------------------------------------
 };

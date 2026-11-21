@@ -19,8 +19,8 @@
 export const PHRASES = {
   // ---- Provenance badge labels -------------------------------------------
   'Live data': 'लाइव डेटा',
-  'Estimated': 'अनुमानित',
-  'Advisory': 'सलाह',
+  Estimated: 'अनुमानित',
+  Advisory: 'सलाह',
   'Reference baseline': 'संदर्भ आधार',
 
   // ---- AQI categories (US EPA bands) ------------------------------------
@@ -50,12 +50,9 @@ export const PHRASES = {
     'आपातकालीन स्थिति! पूरी आबादी प्रभावित हो सकती है। सभी गैर-आवश्यक बाहरी संपर्क से बचें।',
 
   // ---- Diurnal curve action hints ----------------------------------------
-  'Ventilate home briefly & run essential errands':
-    'घर में कुछ देर हवा खुली करें और ज़रूरी काम निपटाएँ',
-  'Thermal inversion peak! Seal doors & wear N95':
-    'तापीय उलटना का चरम! दरवाज़े बंद रखें और N95 पहनें',
-  'Moderate exposure - run air purifiers indoors':
-    'मध्यम संपर्क — घर में एयर प्यूरीफ़ायर चलाएँ',
+  'Ventilate home briefly & run essential errands': 'घर में कुछ देर हवा खुली करें और ज़रूरी काम निपटाएँ',
+  'Thermal inversion peak! Seal doors & wear N95': 'तापीय उलटना का चरम! दरवाज़े बंद रखें और N95 पहनें',
+  'Moderate exposure - run air purifiers indoors': 'मध्यम संपर्क — घर में एयर प्यूरीफ़ायर चलाएँ',
 
   // ---- Inversion physics descriptors --------------------------------------
   'Extreme (Morning Trap at 180m)': 'चरम (सुबह 180 मीटर पर जाल)',
@@ -150,8 +147,7 @@ export const PHRASES = {
     'उच्च (सूक्ष्म थक्कों से हृदय संवहनी और स्ट्रोक का बढ़ा जोखिम)',
   'Severe (Immediate bronchospasm trigger from PM2.5 and NO2)':
     'गंभीर (PM2.5 और NO2 से तुरंत ब्रोंकोस्पाज़्म)',
-  'High cumulative exposure (8+ hours daily in urban air)':
-    'उच्च संचयी संपर्क (शहरी हवा में रोज़ 8+ घंटे)',
+  'High cumulative exposure (8+ hours daily in urban air)': 'उच्च संचयी संपर्क (शहरी हवा में रोज़ 8+ घंटे)',
   'Moderate to High (Animals lack nasal filtering for ultrafine dust)':
     'मध्यम से उच्च (जानवरों में अति-सूक्ष्म धूल के लिए नाकीय छानने की क्षमता नहीं)',
 
@@ -167,8 +163,7 @@ export const PHRASES = {
     'सुबह की तेज़ पैदल चाल को हल्की indoor stretching / योग से बदलें',
   'Maintain indoor relative humidity at 40-50% to prevent mucosal irritation':
     'श्लेष्मा झिल्ली की जलन रोकने के लिए घर की सापेक्ष आर्द्रता 40-50% रखें',
-  'Keep rescue inhalers accessible at all times':
-    'आपातकालीन इनहेलर हमेशा हाथ की पहुँच में रखें',
+  'Keep rescue inhalers accessible at all times': 'आपातकालीन इनहेलर हमेशा हाथ की पहुँच में रखें',
   'Run activated carbon filter alongside MERV 13 to adsorb winter NO2 & VOCs':
     'सर्दी के NO2 और VOCs को सोखने के लिए MERV 13 के साथ सक्रिय कार्बन फ़िल्टर भी चलाएँ',
   'Seal bedroom door gaps with damp towel or foam sweep during night inversion':
@@ -179,14 +174,13 @@ export const PHRASES = {
     'शिफ्ट के बाद मोटे कण हटाने के लिए सेलाइन मिस्ट से नाक का धोना करें',
   'Switch from motorcycling / open auto-rickshaws to closed metro/buses during peaks':
     'चरम समय में मोटरसाइकिल या खुली ऑटो-रिक्शे से बंद मेट्रो/बस पर जाएँ',
-  'Keep pets indoors during peak inversion hours':
-    'चरम उलटना घंटों में पालतू जानवरों को घर के अंदर रखें',
+  'Keep pets indoors during peak inversion hours': 'चरम उलटना घंटों में पालतू जानवरों को घर के अंदर रखें',
   'Wipe paws and fur with damp cloth after walks to prevent grooming ingestion of soot':
     'टहलने के बाद पंजे और बाल गीले कपड़े से पोंछें ताकि सफ़ाई के समय कालिख न निगलें',
   'Limit high-intensity fetch/running games on lawns during high AQI hours':
     'उच्च AQI घंटों में बगीचे पर तेज़ दौड़-भाग वाले खेल सीमित रखें',
   'Shorten bathroom walks to 5-10 minutes during morning inversion peak':
-    'सुबह की उलटना के चरम में बाहर निकलने का समय 5-10 मिनट तक सीमित रखें',
+    'सुबह की उलटना के चरम में बाहर निकलने का समय 5-10 मिनट तक सीमित रखें'
 };
 
 /**

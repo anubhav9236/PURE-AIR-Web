@@ -60,9 +60,7 @@ async function downscaleImage(file) {
     context.drawImage(bitmap, 0, 0, width, height);
 
     const dataUrl = canvas.toDataURL('image/jpeg', UPLOAD_QUALITY);
-    return typeof dataUrl === 'string' && dataUrl.startsWith('data:image/jpeg')
-      ? dataUrl
-      : null;
+    return typeof dataUrl === 'string' && dataUrl.startsWith('data:image/jpeg') ? dataUrl : null;
   } catch {
     return null;
   } finally {
@@ -315,8 +313,12 @@ export default function IAQRoomScanner({ hotspot }) {
                       <span className="text-[11px] font-bold uppercase tracking-wider text-teal-800 block">
                         {s.category}
                       </span>
-                      <span className="text-xs font-bold text-slate-900 block mt-0.5">{s.title}</span>
-                      <span className="text-[11px] text-slate-600 line-clamp-1 mt-0.5">{s.desc}</span>
+                      <span className="text-xs font-bold text-slate-900 block mt-0.5">
+                        {s.title}
+                      </span>
+                      <span className="text-[11px] text-slate-600 line-clamp-1 mt-0.5">
+                        {s.desc}
+                      </span>
                     </button>
                   );
                 })}
@@ -491,8 +493,13 @@ export default function IAQRoomScanner({ hotspot }) {
                 </div>
 
                 <div className="pt-2 text-xs text-emerald-900 border-t border-teal-200 flex items-start gap-1.5 font-bold">
-                  <Sparkles className="w-3.5 h-3.5 text-emerald-700 shrink-0 mt-0.5" aria-hidden="true" />
-                  <span>{t('scanner.expected')}: {auditResult.cleanAirDeliveryImpact}</span>
+                  <Sparkles
+                    className="w-3.5 h-3.5 text-emerald-700 shrink-0 mt-0.5"
+                    aria-hidden="true"
+                  />
+                  <span>
+                    {t('scanner.expected')}: {auditResult.cleanAirDeliveryImpact}
+                  </span>
                 </div>
               </div>
             </div>

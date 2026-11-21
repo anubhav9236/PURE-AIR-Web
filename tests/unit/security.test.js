@@ -5,7 +5,17 @@ import { join, extname, relative } from 'node:path';
 // Vitest runs from the project root.
 const ROOT = process.cwd();
 
-const SCAN_EXTENSIONS = new Set(['.js', '.jsx', '.ts', '.tsx', '.mjs', '.cjs', '.json', '.html', '.css']);
+const SCAN_EXTENSIONS = new Set([
+  '.js',
+  '.jsx',
+  '.ts',
+  '.tsx',
+  '.mjs',
+  '.cjs',
+  '.json',
+  '.html',
+  '.css'
+]);
 const SKIP_DIRS = new Set(['node_modules', '.git', 'dist', '.vite', 'coverage']);
 
 /**

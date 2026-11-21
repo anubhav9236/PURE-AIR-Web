@@ -9,7 +9,10 @@ import { sanitizePromptField } from './sanitize.js';
 
 export function parseModelJson(raw) {
   if (typeof raw !== 'string') return null;
-  let text = raw.replace(/```json/gi, '').replace(/```/g, '').trim();
+  let text = raw
+    .replace(/```json/gi, '')
+    .replace(/```/g, '')
+    .trim();
 
   const firstBrace = text.indexOf('{');
   const lastBrace = text.lastIndexOf('}');

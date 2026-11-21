@@ -29,7 +29,7 @@ export const STRINGS = {
   ...scannerStrings,
   ...hacklabStrings,
   ...impactStrings,
-  ...chatStrings,
+  ...chatStrings
 };
 
 /**

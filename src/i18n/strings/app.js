@@ -30,7 +30,7 @@ export const appStrings = {
   'app.disclaimer': {
     en: 'Reference values are modelled estimates for education, not a live air-quality feed. For medical emergencies, contact a doctor.',
     hi: 'संदर्भ मान शिक्षा के लिए नमूना अनुमान हैं, लाइव वायु-गुणवत्ता फ़ीड नहीं। चिकित्सा आपात स्थिति में डॉक्टर से संपर्क करें।'
-  },
+  }
 
   // ---- Navigation -------------------------------------------------------
 };

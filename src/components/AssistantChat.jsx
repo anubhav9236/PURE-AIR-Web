@@ -262,9 +262,7 @@ export default function AssistantChat({ hotspot }) {
                       : 'bg-teal-700 text-white shadow-sm'
                   }`}
                 >
-                  <span className="sr-only">
-                    {isBot ? t('chat.assistant') : t('chat.you')}:{' '}
-                  </span>
+                  <span className="sr-only">{isBot ? t('chat.assistant') : t('chat.you')}: </span>
                   <div className="whitespace-pre-line space-y-1 font-medium">
                     {renderEmphasis(msg.text)}
                   </div>
@@ -282,12 +280,12 @@ export default function AssistantChat({ hotspot }) {
                           <Provenance
                             variant={msg.source === 'live' ? 'live' : 'reference'}
                             label={
-                              msg.source === 'live' ? t('ai.responseLive') : t('ai.responseFallback')
+                              msg.source === 'live'
+                                ? t('ai.responseLive')
+                                : t('ai.responseFallback')
                             }
                             title={
-                              msg.source === 'live' && msg.model
-                                ? `Model: ${msg.model}`
-                                : undefined
+                              msg.source === 'live' && msg.model ? `Model: ${msg.model}` : undefined
                             }
                           />
                         )}
@@ -303,7 +301,9 @@ export default function AssistantChat({ hotspot }) {
                           ) : (
                             <Volume2 className="w-3.5 h-3.5" aria-hidden="true" />
                           )}
-                          <span>{speechActive ? t('chat.stop', 'Stop') : t('chat.listen', 'Listen')}</span>
+                          <span>
+                            {speechActive ? t('chat.stop', 'Stop') : t('chat.listen', 'Listen')}
+                          </span>
                         </button>
                       </span>
                     )}

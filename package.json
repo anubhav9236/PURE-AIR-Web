@@ -12,15 +12,22 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "typecheck": "tsc -p jsconfig.json",
     "audit:i18n": "node scripts/audit-i18n.mjs",
     "audit:city": "node scripts/realign-city-aqi.mjs",
     "audit:dist": "node scripts/audit-dist.mjs",
     "report:catalogue": "node scripts/report-catalogue.mjs",
     "diagnose:provider": "node scripts/diagnose-provider.mjs",
-    "check": "npm run lint && npm run typecheck && npm run test:coverage && npm run build && npm run audit:dist && npm run audit:i18n && npm run report:catalogue"
+    "check": "npm run format:check && npm run lint && npm run typecheck && npm run test:coverage && npm run build && npm run audit:dist && npm run audit:i18n && npm run report:catalogue"
+  },
+  "engines": {
+    "node": ">=20.19.0"
   },
   "dependencies": {
     "lucide-react": "^1.75.0",
@@ -28,6 +35,7 @@
     "react-dom": "^19.3.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.65.1",
     "@tailwindcss/vite": "^4.3.5",
     "@testing-library/jest-dom": "^8.0.0",
     "@testing-library/react": "^16.3.3",
@@ -39,6 +47,7 @@
     "axe-core": "^4.14.1",
     "jsdom": "^31.0.1",
     "oxlint": "^1.90.0",
+    "prettier": "^3.10.1",
     "tailwindcss": "^4.3.5",
     "typescript": "^7.0.2",
     "vite": "^8.3.6",

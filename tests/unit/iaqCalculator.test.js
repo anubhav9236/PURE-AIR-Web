@@ -123,9 +123,7 @@ describe('Berkeley Earth cigarette-equivalent model', () => {
     expect(eightHours.managedDailyMean).toBeCloseTo(expectedManaged, 0);
 
     // More time outdoors means less time indoors for filtration to help.
-    expect(eightHours.avoidedCigarettesPerDay).toBeLessThan(
-      oneHour.avoidedCigarettesPerDay
-    );
+    expect(eightHours.avoidedCigarettesPerDay).toBeLessThan(oneHour.avoidedCigarettesPerDay);
   });
 
   it('scales the avoided load with the respiratory vulnerability multiplier', () => {
@@ -137,9 +135,7 @@ describe('Berkeley Earth cigarette-equivalent model', () => {
       outdoorPM25: 280,
       respiratoryMultiplier: 1.0
     });
-    expect(vulnerable.avoidedCigarettesPerDay).toBeGreaterThan(
-      baseline.avoidedCigarettesPerDay
-    );
+    expect(vulnerable.avoidedCigarettesPerDay).toBeGreaterThan(baseline.avoidedCigarettesPerDay);
   });
 
   it('uses the published Berkeley Earth constant', () => {

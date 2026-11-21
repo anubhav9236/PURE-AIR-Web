@@ -2,7 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍃</text></svg>" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍃</text></svg>"
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PureAir Life — GenAI Winter Smog &amp; Urban Air Assistant</title>
     <meta
@@ -21,10 +25,16 @@
       script-src does not need 'unsafe-inline'. Gemini traffic goes to the
       same-origin server proxy; generativelanguage.googleapis.com is allowed
       only for the optional user-supplied-key fallback on static hosts.
+
+      `frame-ancestors` is deliberately absent here: browsers ignore that
+      directive when the policy is delivered through a <meta> element, so it
+      would be dead weight (and a console warning). The real header - the one
+      that is actually enforced - is sent by `vercel.json` and by
+      `server/index.js`.
     -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://generativelanguage.googleapis.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://generativelanguage.googleapis.com; base-uri 'self'; form-action 'self'; object-src 'none'"
     />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
 
@@ -35,7 +45,9 @@
       rel="stylesheet"
     />
   </head>
-  <body class="bg-slate-50 text-slate-800 min-h-screen selection:bg-teal-500 selection:text-white antialiased">
+  <body
+    class="bg-slate-50 text-slate-800 min-h-screen selection:bg-teal-500 selection:text-white antialiased"
+  >
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

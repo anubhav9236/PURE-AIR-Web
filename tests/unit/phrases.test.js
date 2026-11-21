@@ -74,7 +74,13 @@ describe('No English leaks in Hindi mode', () => {
   it('translates every city haze descriptor', () => {
     const leaks = [];
     for (const city of ALL_INDIAN_CITIES) {
-      for (const field of ['smogType', 'inversionStrength', 'status', 'safeWindow', 'peakSmogHours']) {
+      for (const field of [
+        'smogType',
+        'inversionStrength',
+        'status',
+        'safeWindow',
+        'peakSmogHours'
+      ]) {
         const translated = translatePhrase(city[field], 'hi');
         for (const leak of englishLeaks(city[field], translated)) {
           leaks.push(`${city.id}.${field}: ${leak}`);

@@ -104,7 +104,7 @@ export const plannerStrings = {
   'planner.sustainableSwap': { en: 'Sustainable swap', hi: 'टिकाऊ विकल्प' },
   'planner.directImpact': { en: 'The direct impact:', hi: 'सीधा प्रभाव:' },
   'planner.collectiveImpact': { en: 'Collective impact milestone', hi: 'सामूहिक प्रभाव मीलका पत्थर' },
-  'planner.smogProtocol': { en: 'Smog protocol:', hi: 'स्मॉग प्रोटोकॉल:' },
+  'planner.smogProtocol': { en: 'Smog protocol:', hi: 'स्मॉग प्रोटोकॉल:' }
 
   // ---- Scanner ----------------------------------------------------------
 };

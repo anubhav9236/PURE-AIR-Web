@@ -117,18 +117,13 @@ async function run() {
     proxyConfigured = Boolean(data?.configured);
     check(true, `proxy reachable at ${PROXY_BASE} (configured: ${proxyConfigured})`);
   } catch {
-    check(
-      false,
-      `proxy not reachable at ${PROXY_BASE} - start it with "npm start" for live AI`
-    );
+    check(false, `proxy not reachable at ${PROXY_BASE} - start it with "npm start" for live AI`);
   }
 
   // ---- 4. Live provider round-trip --------------------------------------
   console.log('\n4. Live provider round-trip');
   if (!envKey) {
-    skip(
-      'no GEMINI_API_KEY in the environment - set it to exercise the live provider'
-    );
+    skip('no GEMINI_API_KEY in the environment - set it to exercise the live provider');
   } else {
     try {
       const controller = new AbortController();
@@ -148,10 +143,7 @@ async function run() {
       clearTimeout(timer);
       const data = await response.json();
       const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-      check(
-        Boolean(reply && reply.trim().length > 0),
-        `live ${MODEL} returned a reply`
-      );
+      check(Boolean(reply && reply.trim().length > 0), `live ${MODEL} returned a reply`);
     } catch (error) {
       // A network failure is reported as a skip, never as a silent pass.
       skip(`live provider unreachable (${error.name || 'network error'})`);

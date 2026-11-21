@@ -24,7 +24,7 @@ export const navStrings = {
   'nav.home': { en: 'PureAir Life Home', hi: 'प्योरएयर लाइफ मुख्य पृष्ठ' },
   'nav.mainTabs': { en: 'Main Navigation Tabs', hi: 'मुख्य नेविगेशन टैब' },
   'nav.language': { en: 'Language', hi: 'भाषा' },
-  'nav.switchToHindi': { en: 'हिंदी में देखें', hi: 'View in English' },
+  'nav.switchToHindi': { en: 'हिंदी में देखें', hi: 'View in English' }
 
   // ---- AI provider status ----------------------------------------------
 };

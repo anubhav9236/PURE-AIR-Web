@@ -31,7 +31,7 @@ export const aiStrings = {
   'ai.responseFallback': {
     en: 'Offline clean-air guide (no AI provider available)',
     hi: 'ऑफ़लाइन क्लीन-एयर गाइड (एआई प्रदाता उपलब्ध नहीं)'
-  },
+  }
 
   // ---- Dashboard --------------------------------------------------------
 };

@@ -224,9 +224,7 @@ export default function IAQHackLab({ hotspot }) {
             <div className="flex items-center justify-between gap-3 p-3.5 rounded-xl bg-white border border-slate-200">
               <div>
                 <span className="font-bold text-slate-900 block">{t('hacklab.shroud')}</span>
-                <span className="text-[11px] text-slate-600 block">
-                  {t('hacklab.shroudDesc')}
-                </span>
+                <span className="text-[11px] text-slate-600 block">{t('hacklab.shroudDesc')}</span>
               </div>
               <button
                 type="button"
@@ -373,7 +371,9 @@ export default function IAQHackLab({ hotspot }) {
               <div className="flex items-center justify-between text-xs sm:text-sm">
                 <div>
                   <span className="text-slate-700 block font-medium">{t('hacklab.diyCost')}</span>
-                  <span className="text-xl font-extrabold text-emerald-800">${crStats.diyCost}</span>
+                  <span className="text-xl font-extrabold text-emerald-800">
+                    ${crStats.diyCost}
+                  </span>
                 </div>
                 <div className="text-right">
                   <span className="text-slate-600 block font-medium">
@@ -386,7 +386,9 @@ export default function IAQHackLab({ hotspot }) {
               </div>
               <div className="mt-2 pt-2 border-t border-slate-200 text-xs font-bold text-emerald-800 flex items-center justify-between">
                 <span>{t('hacklab.moneySaved')}</span>
-                <span>+${crStats.savings} {t('hacklab.saved')}</span>
+                <span>
+                  +${crStats.savings} {t('hacklab.saved')}
+                </span>
               </div>
             </div>
           </div>
@@ -493,9 +495,7 @@ export default function IAQHackLab({ hotspot }) {
           </div>
         </div>
 
-        <p className="text-[11px] text-slate-600 leading-relaxed">
-          {t('hacklab.methodNote')}
-        </p>
+        <p className="text-[11px] text-slate-600 leading-relaxed">{t('hacklab.methodNote')}</p>
       </section>
 
       {/* ---- Hacks catalogue ---- */}
@@ -511,7 +511,9 @@ export default function IAQHackLab({ hotspot }) {
             <Sparkles className="w-5 h-5 text-teal-700" aria-hidden="true" />
             {t('hacklab.catalogTitle')}
           </h2>
-          <p className="text-xs sm:text-sm text-slate-700 mt-0.5">{t('hacklab.catalogExplainer')}</p>
+          <p className="text-xs sm:text-sm text-slate-700 mt-0.5">
+            {t('hacklab.catalogExplainer')}
+          </p>
         </div>
 
         <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 list-none p-0 m-0">
@@ -531,12 +533,15 @@ export default function IAQHackLab({ hotspot }) {
 
               <div>
                 <h3 className="text-base font-extrabold text-slate-900">{hack.title}</h3>
-                <p className="text-xs text-slate-700 mt-1.5 leading-relaxed font-medium">{hack.desc}</p>
+                <p className="text-xs text-slate-700 mt-1.5 leading-relaxed font-medium">
+                  {hack.desc}
+                </p>
               </div>
 
               <div className="pt-2 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-600">
                 <span>
-                  {t('hacklab.materials')}: <strong className="text-slate-900">{hack.materials}</strong>
+                  {t('hacklab.materials')}:{' '}
+                  <strong className="text-slate-900">{hack.materials}</strong>
                 </span>
                 <span className="text-teal-800 font-bold">
                   {hack.cost} • {hack.time}

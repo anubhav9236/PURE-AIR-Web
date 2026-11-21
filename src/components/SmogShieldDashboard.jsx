@@ -8,7 +8,11 @@ import {
   CheckCircle2,
   ChevronRight
 } from 'lucide-react';
-import { generateDiurnalCurve, getAQICategory, VULNERABLE_PROFILES } from '../services/telemetryService';
+import {
+  generateDiurnalCurve,
+  getAQICategory,
+  VULNERABLE_PROFILES
+} from '../services/telemetryService';
 import Provenance from './Provenance';
 import { useLanguage } from '../i18n/languageContext.js';
 import { translatePhrase } from '../i18n/phrases.js';
@@ -19,20 +23,13 @@ import { translatePhrase } from '../i18n/phrases.js';
  * @param {() => void} props.onNavigateToPlanner
  * @param {() => void} props.onNavigateToHackLab
  */
-export default function SmogShieldDashboard({
-  hotspot,
-  onNavigateToPlanner,
-  onNavigateToHackLab
-}) {
+export default function SmogShieldDashboard({ hotspot, onNavigateToPlanner, onNavigateToHackLab }) {
   const { t, lang } = useLanguage();
   const [selectedVulnerability, setSelectedVulnerability] = useState('toddler');
 
   // The curve only depends on the selected city, so avoid recomputing it on
   // every unrelated re-render.
-  const diurnalData = useMemo(
-    () => generateDiurnalCurve(hotspot.pm25, lang),
-    [hotspot.pm25, lang]
-  );
+  const diurnalData = useMemo(() => generateDiurnalCurve(hotspot.pm25, lang), [hotspot.pm25, lang]);
   const currentCategory = getAQICategory(hotspot.aqi, lang);
   const profileData = VULNERABLE_PROFILES[selectedVulnerability];
 
@@ -186,8 +183,7 @@ export default function SmogShieldDashboard({
               <div className="mt-3 p-4 rounded-xl bg-white border border-slate-200 shadow-sm">
                 <div className="text-lg font-extrabold text-teal-800">{hotspot.safeWindow}</div>
                 <p className="text-xs text-slate-700 mt-1.5 leading-relaxed">
-                  {t('dash.safeWindowExplainer')}{' '}
-                  <strong>{t('dash.safeWindowCta')}</strong>
+                  {t('dash.safeWindowExplainer')} <strong>{t('dash.safeWindowCta')}</strong>
                 </p>
                 <Provenance variant="advisory" className="mt-2.5" />
               </div>
@@ -241,9 +237,7 @@ export default function SmogShieldDashboard({
               <Sun className="w-5 h-5 text-amber-600" aria-hidden="true" />
               {t('dash.diurnal')}
             </h2>
-            <p className="text-xs sm:text-sm text-slate-600 mt-0.5">
-              {t('dash.diurnalExplainer')}
-            </p>
+            <p className="text-xs sm:text-sm text-slate-600 mt-0.5">{t('dash.diurnalExplainer')}</p>
           </div>
 
           <div className="flex items-center gap-3 text-xs font-semibold">
@@ -283,9 +277,7 @@ export default function SmogShieldDashboard({
                       <span className="text-[11px] font-bold block">
                         {d.hour} • AQI {d.aqi}
                       </span>
-                      <span className="text-[11px] text-teal-300 block">
-                        PM2.5: {d.pm25} µg/m³
-                      </span>
+                      <span className="text-[11px] text-teal-300 block">PM2.5: {d.pm25} µg/m³</span>
                       <span className="text-[10px] text-slate-200 block">{d.action}</span>
                     </div>
 
@@ -409,8 +401,7 @@ export default function SmogShieldDashboard({
               {translatePhrase(profileData.lungVulnerability, lang)}
             </p>
             <div className="text-xs text-slate-700 pt-1">
-              {t('dash.currentCityAqi')}{' '}
-              <strong className="text-slate-900">{hotspot.aqi}</strong>{' '}
+              {t('dash.currentCityAqi')} <strong className="text-slate-900">{hotspot.aqi}</strong>{' '}
               <span
                 className={`font-bold ${
                   hotspot.aqi > profileData.criticalAqiThreshold ? 'text-rose-700' : 'text-teal-800'

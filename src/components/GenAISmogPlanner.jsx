@@ -408,7 +408,9 @@ export default function GenAISmogPlanner({ hotspot, onLogRoutineCompleted }) {
                               <span className="text-xs font-mono font-bold text-teal-800">
                                 {block.time}
                               </span>
-                              <span className="text-xs font-bold text-slate-900">{block.phase}</span>
+                              <span className="text-xs font-bold text-slate-900">
+                                {block.phase}
+                              </span>
                             </div>
                             <span className="text-[11px] px-2 py-0.5 rounded-full font-bold uppercase bg-slate-100 text-amber-900 border border-slate-300 inline-block mt-1">
                               {block.hazardLevel}

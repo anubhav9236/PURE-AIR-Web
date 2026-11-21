@@ -2,6 +2,13 @@
 
 **GenAI-powered environmental assistant for families navigating winter smog and urban air pollution across India.**
 
+[![CI](https://github.com/anubhav9236/PureAir-Life/actions/workflows/ci.yml/badge.svg)](https://github.com/anubhav9236/PureAir-Life/actions/workflows/ci.yml)
+[![Tests](https://img.shields.io/badge/tests-350%20passing-16a34a)](https://github.com/anubhav9236/PureAir-Life)
+[![Coverage](https://img.shields.io/badge/coverage-92.8%25%20statements-16a34a)](https://github.com/anubhav9236/PureAir-Life)
+[![Type check](https://img.shields.io/badge/type%20check-tsc-0%20errors-16a34a)](https://github.com/anubhav9236/PureAir-Life)
+[![Lint](https://img.shields.io/badge/lint-0%20errors%20%200%20warnings-16a34a)](https://github.com/anubhav9236/PureAir-Life)
+[![License: MIT](https://img.shields.io/badge/license-MIT-16a34a)](LICENSE)
+
 PureAir Life turns a city's air-quality profile into practical daily decisions: low-emission
 routines, indoor air-quality fixes, sustainable alternatives, and a clear explanation of what
 each choice does to your health and your neighbourhood's emissions. It speaks **English and
@@ -11,14 +18,14 @@ Hindi**.
 
 ## What it does
 
-| Workspace | Purpose |
-|---|---|
-| **Smog Shield** | City baseline, hourly inversion curve, and the physiology of your most at-risk family members. |
-| **AI Smog-Armor** | A personalised hour-by-hour low-emission routine built from your household profile (commute, heating, cooking, vulnerabilities). |
-| **Room Vision Auditor** | Upload a room photo to find particulate leak paths, airflow bottlenecks and budget DIY fixes. |
-| **DIY Hack Lab** | Corsi-Rosenthal box CADR/ACH simulator plus a single-zone indoor concentration model grounded in your city's baseline. |
-| **Family Impact** | Berkeley Earth cigarette-equivalent avoidance, CO₂/soot savings, and pledges that actually change the numbers. |
-| **Clean Air AI** | Conversational assistant with multi-turn context, bilingual, and honest about its own provenance. |
+| Workspace               | Purpose                                                                                                                          |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| **Smog Shield**         | City baseline, hourly inversion curve, and the physiology of your most at-risk family members.                                   |
+| **AI Smog-Armor**       | A personalised hour-by-hour low-emission routine built from your household profile (commute, heating, cooking, vulnerabilities). |
+| **Room Vision Auditor** | Upload a room photo to find particulate leak paths, airflow bottlenecks and budget DIY fixes.                                    |
+| **DIY Hack Lab**        | Corsi-Rosenthal box CADR/ACH simulator plus a single-zone indoor concentration model grounded in your city's baseline.           |
+| **Family Impact**       | Berkeley Earth cigarette-equivalent avoidance, CO₂/soot savings, and pledges that actually change the numbers.                   |
+| **Clean Air AI**        | Conversational assistant with multi-turn context, bilingual, and honest about its own provenance.                                |
 
 ---
 
@@ -43,7 +50,7 @@ browser ──POST /api/gemini──▶  Node server (server/geminiProxy.js)  �
 - If the provider is unreachable, the app falls back to a bundled offline
   clean-air guide and **says so** - it never fabricates an AI answer.
 - The header badge tracks reality: it shows **AI live** only while the provider
-  is reachable *and* the last answer came from the model. As soon as an answer
+  is reachable _and_ the last answer came from the model. As soon as an answer
   falls back, the badge switches to **Local guide**.
 
 ### Static hosting without a server
@@ -66,9 +73,9 @@ api/gemini.js        ->  Vercel Function  ->  /api/gemini
 src/                 ->  static build      ->  dist/
 ```
 
-| Request | Handling |
-|---|---|
-| `GET /api/gemini` | Provider status: `{ configured, models }` |
+| Request            | Handling                                                        |
+| ------------------ | --------------------------------------------------------------- |
+| `GET /api/gemini`  | Provider status: `{ configured, models }`                       |
 | `POST /api/gemini` | `{ prompt, systemInstruction, history, imageBase64 }` -> Gemini |
 
 `api/gemini.js` is a thin adapter: it delegates to the **same**
@@ -81,8 +88,8 @@ behave identically on every host.
 Vercel dashboard -> **PureAir-Life** -> **Settings** -> **Environment
 Variables**:
 
-| Name | Value | Scope |
-|---|---|---|
+| Name             | Value                     | Scope                               |
+| ---------------- | ------------------------- | ----------------------------------- |
 | `GEMINI_API_KEY` | your Google AI Studio key | Production (and Preview, if wanted) |
 
 Use a **plain** name. A `VITE_`-prefixed variable is inlined into the client
@@ -104,11 +111,11 @@ rewrites the legacy `GET /api/gemini/status` path onto the function:
 
 ### Vercel platform limits, and how the app respects them
 
-| Limit | Value | How PureAir Life stays inside it |
-|---|---|---|
-| Request / response body | 4.5 MB | The browser downscales room photos to a 1280 px JPEG before upload; the proxy caps the body at 4 MB and answers `413` itself rather than letting the platform return an opaque `FUNCTION_PAYLOAD_TOO_LARGE`. |
-| Function duration | 300 s (Hobby, Fluid Compute) | The proxy budgets 8 s per model and 20 s for the whole failover chain, then returns a clean error so the client falls back to the local guide. |
-| Function memory | 2 GB (Hobby) | The function has **no third-party dependencies** - Node standard library only. |
+| Limit                   | Value                        | How PureAir Life stays inside it                                                                                                                                                                             |
+| ----------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Request / response body | 4.5 MB                       | The browser downscales room photos to a 1280 px JPEG before upload; the proxy caps the body at 4 MB and answers `413` itself rather than letting the platform return an opaque `FUNCTION_PAYLOAD_TOO_LARGE`. |
+| Function duration       | 300 s (Hobby, Fluid Compute) | The proxy budgets 8 s per model and 20 s for the whole failover chain, then returns a clean error so the client falls back to the local guide.                                                               |
+| Function memory         | 2 GB (Hobby)                 | The function has **no third-party dependencies** - Node standard library only.                                                                                                                               |
 
 ### Deploying the Node server instead
 
@@ -136,36 +143,51 @@ npm run dev                   # http://localhost:5173
 
 ### Scripts
 
-| Command | Purpose |
-|---|---|
-| `npm run dev` | Vite dev server with the Gemini proxy mounted. |
-| `npm run build` | Production build into `dist/` (Tailwind compiled, code-split). |
-| `npm start` | Serves `dist/` with security headers and the Gemini proxy. |
-| `npm run preview` | Vite's own preview server. |
-| `npm test` | Vitest unit, integration, component and accessibility suite. |
-| `npm run test:coverage` | Same suite with a coverage report and enforced thresholds. |
-| `npm run lint` | oxlint - configured to report zero errors *and* zero warnings. |
-| `npm run typecheck` | `tsc --noEmit` over the whole `src/` tree (JSDoc types). |
-| `npm run check` | The full gate: lint + typecheck + coverage + build + dist/i18n/catalogue audits. |
-| `npm run audit:i18n` | Checks every catalogue string has a Hindi translation. |
-| `npm run audit:city` | Regenerates city AQI from PM2.5 using the EPA breakpoint table. |
-| `npm run audit:dist` | Scans the built bundle for secrets, CDN links and inline scripts. |
-| `npm run report:catalogue` | Catalogue inventory: AQI/PM2.5 consistency + translation coverage. |
-| `npm run diagnose:provider` | Live-provider connectivity diagnostic (no key required). |
+| Command                     | Purpose                                                                    |
+| --------------------------- | -------------------------------------------------------------------------- |
+| `npm run dev`               | Vite dev server with the Gemini proxy mounted.                             |
+| `npm run build`             | Production build into `dist/` (Tailwind compiled, code-split).             |
+| `npm start`                 | Serves `dist/` with security headers and the Gemini proxy.                 |
+| `npm run preview`           | Vite's own preview server.                                                 |
+| `npm test`                  | Vitest unit, integration, component and accessibility suite.               |
+| `npm run test:coverage`     | Same suite with a coverage report and enforced thresholds.                 |
+| `npm run test:e2e`          | Playwright journeys in a real browser against the production build.        |
+| `npm run lint`              | oxlint - configured to report zero errors _and_ zero warnings.             |
+| `npm run typecheck`         | `tsc --noEmit` over the whole `src/` tree (JSDoc types).                   |
+| `npm run format`            | Prettier - rewrites every file in the canonical style.                     |
+| `npm run format:check`      | Prettier - verifies the canonical style without changing anything.         |
+| `npm run check`             | The full gate: format + lint + typecheck + coverage + build + audits.      |
+| `npm run audit:i18n`        | Checks every catalogue string has a Hindi translation.                     |
+| `npm run audit:city`        | Regenerates city AQI from PM2.5 using the EPA breakpoint table.            |
+| `npm run audit:dist`        | Scans the built bundle for secrets, CDN links, inline scripts and the CSP. |
+| `npm run report:catalogue`  | Catalogue inventory: AQI/PM2.5 consistency + translation coverage.         |
+| `npm run diagnose:provider` | Live-provider connectivity diagnostic (no key required).                   |
+
+### Continuous integration
+
+`.github/workflows/ci.yml` runs on every push and pull request to `main`, and
+mirrors `npm run check` exactly:
+
+| Job                | What it proves                                                                                                                                       |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `quality-gate`     | The formatting, the lint rules, the type checker, the whole test suite with its coverage floors, the production build and the three audits all pass. |
+| `end-to-end`       | The Playwright journeys pass in a real Chromium against the production build. It only starts once the quality gate is green.                         |
+| `dependency-audit` | `npm audit --audit-level=high` reports nothing.                                                                                                      |
 
 ### Quality gate
 
 `npm run check` is the single command that must stay green. It runs, in order:
 
-| Step | Gate |
-|---|---|
-| `lint` | oxlint reports no error and no warning. |
-| `typecheck` | `tsc` reports no type error across `src/`. |
-| `test:coverage` | 350 tests pass and coverage stays above the floors in `vitest.config.js` (88% statements, 80% branches, 84% functions, 90% lines). |
-| `build` | The production Vite build succeeds. |
-| `audit:dist` | The built bundle contains no key, no CDN script and no inline script. |
-| `audit:i18n` | Every catalogue string has a Hindi translation. |
-| `report:catalogue` | Every city's stored AQI matches its PM2.5, and every catalogue string is translated. |
+| Step               | Gate                                                                                                                               |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `format:check`     | Prettier reports no file out of style.                                                                                             |
+| `lint`             | oxlint reports no error and no warning.                                                                                            |
+| `typecheck`        | `tsc` reports no type error across `src/`.                                                                                         |
+| `test:coverage`    | 350 tests pass and coverage stays above the floors in `vitest.config.js` (88% statements, 80% branches, 84% functions, 90% lines). |
+| `build`            | The production Vite build succeeds.                                                                                                |
+| `audit:dist`       | The built bundle contains no key, no CDN script and no inline script, and the enforced CSP header is present.                      |
+| `audit:i18n`       | Every catalogue string has a Hindi translation.                                                                                    |
+| `report:catalogue` | Every city's stored AQI matches its PM2.5, and every catalogue string is translated.                                               |
 
 The maintenance scripts **import** the application modules rather than parsing
 the source text, so a report can never drift from the running code.
@@ -202,14 +224,18 @@ server/
 scripts/
   realign-city-aqi.mjs        regenerates city AQI/status from PM2.5
   audit-i18n.mjs              reports catalogue strings with no Hindi translation
-  audit-dist.mjs              scans the built bundle for secrets, CDN links, inline scripts
+  audit-dist.mjs              scans the built bundle for secrets, CDN links, inline
+                              scripts and the enforced Content-Security-Policy
   report-catalogue.mjs        catalogue inventory and consistency report
   diagnose-provider.mjs       live-provider connectivity diagnostic (never prints a key)
 tests/
   unit/                       pure logic, security, deployment guard
   components/                 user journeys through the real components
-  accessibility/              axe-core audits + the WCAG contrast guard
-vercel.json                   Vercel build + rewrite configuration
+  accessibility/              axe-core audits + the WCAG contrast and motion guards
+  e2e/                        Playwright journeys against the production build
+.github/workflows/ci.yml      the quality gate, the E2E suite and the dependency audit
+playwright.config.js          E2E configuration (local preview server, or a deployment URL)
+vercel.json                   Vercel build, rewrite and security-header configuration
 ```
 
 - **Large modules are split behind stable facades.** `telemetryService.js`,
@@ -243,7 +269,7 @@ headings:
   `src/i18n/strings.js` is the facade that merges them. Every key carries both
   an English and a Hindi value, and an unknown key degrades to English rather
   than rendering blank.
-- `src/i18n/phrases.js` holds the Hindi translations for the *data* strings the
+- `src/i18n/phrases.js` holds the Hindi translations for the _data_ strings the
   catalogue ships with: haze descriptors, inversion physics, AQI category
   guidance, the diurnal action hints and the vulnerable-group profiles. A
   missing entry falls back to the English source instead of blanking the UI.
@@ -260,7 +286,7 @@ PureAir Life distinguishes four kinds of information, and labels every one of
 them in the UI:
 
 - **Reference baseline** - the shipped per-city winter-episode values. These
-  are modelled reference figures, *not* a live monitoring feed.
+  are modelled reference figures, _not_ a live monitoring feed.
 - **Estimated** - values computed by a documented model (CADR/ACH, Berkeley
   Earth, single-zone mass balance).
 - **Advisory** - general guidance that is not tied to any measurement.
@@ -279,14 +305,15 @@ invents live readings or statistics.
 ## Testing
 
 ```bash
-npm test
+npm test          # 350 unit / integration / component / accessibility tests
+npm run test:e2e  # 6 end-to-end journeys in a real browser
 ```
 
-The suite is 350 tests across 25 files and covers telemetry and EPA breakpoint
-maths, the CR-box and Berkeley Earth models, the indoor mass-balance model,
-input sanitisation (including that Devanagari survives), model-response schema
-validation, provider failover and fallbacks, the proxy's validation, routing
-and rate limiting, secret scanning of both source and `dist/`, bilingual
+The Vitest suite is 350 tests across 25 files and covers telemetry and EPA
+breakpoint maths, the CR-box and Berkeley Earth models, the indoor mass-balance
+model, input sanitisation (including that Devanagari survives), model-response
+schema validation, provider failover and fallbacks, the proxy's validation,
+routing and rate limiting, secret scanning of both source and `dist/`, bilingual
 coverage of the catalogue, the language provider's switching and persistence,
 and component-level user journeys (navigation, language switching, city search,
 pledges, chat).
@@ -300,15 +327,28 @@ generated routine crediting the household's avoided cigarettes and CO2, a pledge
 crediting resilience points, and visited workspaces staying mounted so the user
 never loses their work.
 
+**The end-to-end suite runs in a real browser.** `tests/e2e/journey.spec.js`
+(Playwright + Chromium) drives the _production_ build - real CSS, real layout,
+real lazy-loaded chunks, a real network stack - and asserts that the dashboard
+renders with the honest reference baseline, that there is exactly one `h1`, that
+the skip link works, that the workspace tablist behaves, that the dashboard
+call-to-action opens the planner, that the whole interface switches to Hindi,
+and that **the page logs no console error at all**. Set `E2E_BASE_URL` to run
+the same suite against a deployed build:
+
+```bash
+E2E_BASE_URL=https://your-deployment.vercel.app npm run test:e2e
+```
+
 The suite contains **zero skipped tests**, and coverage is a hard gate
 (`vitest.config.js`) rather than a report nobody reads:
 
-| Metric | Floor | Actual |
-|---|---|---|
-| Statements | 88% | 92.8% |
-| Branches | 80% | 85.1% |
-| Functions | 84% | 89.0% |
-| Lines | 90% | 95.1% |
+| Metric     | Floor | Actual |
+| ---------- | ----- | ------ |
+| Statements | 88%   | 92.8%  |
+| Branches   | 80%   | 85.1%  |
+| Functions  | 84%   | 89.0%  |
+| Lines      | 90%   | 95.1%  |
 
 `tests/unit/deploy.test.js` is the deployment guard. It fails the build when
 the repository would break a host:
@@ -321,7 +361,7 @@ the repository would break a host:
 - a `node <file>` npm script points at a file that does not exist;
 - `vercel.json` is misconfigured;
 - `.gitignore` would exclude `src`, `server`, `api`, `tests` or `scripts` -
-  the mistake that produced an empty repository and a *"Module not found"*
+  the mistake that produced an empty repository and a _"Module not found"_
   build failure;
 - a key-shaped string appears anywhere in the source tree;
 - a module under `src/` is not reachable from `src/main.jsx` - dead code is a

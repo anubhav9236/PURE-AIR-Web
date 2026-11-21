@@ -129,8 +129,13 @@ sweeper.unref?.();
  */
 function cleanString(value, max) {
   if (typeof value !== 'string') return '';
-  // eslint-disable-next-line no-control-regex -- deliberately strips control characters
-  return value.replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, max);
+  return (
+    value
+      // eslint-disable-next-line no-control-regex -- deliberately strips control characters
+      .replace(/[\u0000-\u001f\u007f]/g, ' ')
+      .trim()
+      .slice(0, max)
+  );
 }
 
 /**

@@ -162,7 +162,9 @@ describe('Routine payload validation', () => {
       roomDetected: 'Bedroom',
       leakageRiskScore: 500,
       primaryVulnerabilities: ['a'],
-      stepByStepFixes: [{ step: 1, title: 'T', diyFix: 'D', estimatedCostUsd: 5, pmReductionPercent: 10 }],
+      stepByStepFixes: [
+        { step: 1, title: 'T', diyFix: 'D', estimatedCostUsd: 5, pmReductionPercent: 10 }
+      ],
       airPurifierPlacementAdvice: 'a',
       cleanAirDeliveryImpact: 'b'
     });
@@ -208,7 +210,12 @@ describe('Provider transport', () => {
     fetch.mockResolvedValue({
       ok: true,
       status: 200,
-      json: async () => ({ ok: true, text: 'Live answer', model: 'gemini-3.8-flash', source: 'live' })
+      json: async () => ({
+        ok: true,
+        text: 'Live answer',
+        model: 'gemini-3.8-flash',
+        source: 'live'
+      })
     });
 
     const result = await callGeminiApi({ prompt: 'hello' });
@@ -301,7 +308,12 @@ describe('Chat assistant behaviour', () => {
     fetch.mockResolvedValue({
       ok: true,
       status: 200,
-      json: async () => ({ ok: true, text: 'Wear an N95.', model: 'gemini-3.8-flash', source: 'live' })
+      json: async () => ({
+        ok: true,
+        text: 'Wear an N95.',
+        model: 'gemini-3.8-flash',
+        source: 'live'
+      })
     });
 
     const result = await askSmogAssistant('Which mask?', [], HOTSPOT);
@@ -395,7 +407,12 @@ describe('Routine and vision generation', () => {
     fetch.mockResolvedValue({
       ok: true,
       status: 200,
-      json: async () => ({ ok: true, text: 'sorry, I cannot help with that', model: 'm', source: 'live' })
+      json: async () => ({
+        ok: true,
+        text: 'sorry, I cannot help with that',
+        model: 'm',
+        source: 'live'
+      })
     });
 
     const result = await generateSmogArmorRoutine(

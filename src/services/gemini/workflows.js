@@ -82,7 +82,8 @@ Return JSON with this exact structure:
     });
     const parsed = parseModelJson(result.text);
     const routine = validateRoutine(parsed);
-    if (!routine) throw new GeminiUnavailableError('invalid_response', 'Malformed routine payload.');
+    if (!routine)
+      throw new GeminiUnavailableError('invalid_response', 'Malformed routine payload.');
     return { ...routine, source: 'live', model: result.model };
   } catch {
     return generateLocalFallbackRoutine(familyProfile, aqiData, lang);
@@ -112,7 +113,13 @@ export function detectImageMimeType(dataUrl) {
  * @param {import('../../types').CityRecord|null} [context] City baseline used to ground the analysis
  * @returns {Promise<Object>} audit with `source` ('live' | 'fallback')
  */
-export async function analyzeRoomIAQ(imageBase64, roomType, userNotes, lang = 'en', context = null) {
+export async function analyzeRoomIAQ(
+  imageBase64,
+  roomType,
+  userNotes,
+  lang = 'en',
+  context = null
+) {
   const languageInstruction =
     lang === 'hi'
       ? 'Write every field in natural, simple Hindi (Devanagari script). Keep brand names and units in English.'

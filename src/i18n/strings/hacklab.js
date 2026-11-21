@@ -102,7 +102,7 @@ export const hacklabStrings = {
   'hacklab.ach': { en: 'Air changes per hour', hi: 'प्रति घंटा हवा परिवर्तन' },
   'hacklab.clearance': { en: 'Time to clear 90%', hi: '90% साफ़ होने का समय' },
   'hacklab.roomBaseline': { en: 'Your city baseline', hi: 'आपके शहर का आधार' },
-  'hacklab.leakage': { en: 'Sealed room', hi: 'सीलबंद कमरा' },
+  'hacklab.leakage': { en: 'Sealed room', hi: 'सीलबंद कमरा' }
 
   // ---- Impact ledger ----------------------------------------------------
 };

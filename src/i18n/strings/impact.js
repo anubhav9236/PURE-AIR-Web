@@ -63,9 +63,15 @@ export const impactStrings = {
   'impact.commuteCar': { en: 'Single-occupant petrol car', hi: 'एकल-यात्री पेट्रोल कार' },
   'impact.commuteKm': { en: 'Daily commute distance (km)', hi: 'रोज़ की यात्रा दूरी (किमी)' },
   'impact.heatingChoice': { en: 'Home heating source', hi: 'घर की हीटिंग' },
-  'impact.heatHeatpump': { en: 'Electric heat pump / inverter AC', hi: 'इलेक्ट्रिक हीट पंप / इनवर्टर AC' },
+  'impact.heatHeatpump': {
+    en: 'Electric heat pump / inverter AC',
+    hi: 'इलेक्ट्रिक हीट पंप / इनवर्टर AC'
+  },
   'impact.heatElectric': { en: 'Electric oil radiator', hi: 'इलेक्ट्रिक ऑयल रेडिएटर' },
-  'impact.heatInsulation': { en: 'Better insulation / passive sealing', hi: 'बेहतर इंसुलेशन / निष्क्रिय सीलिंग' },
+  'impact.heatInsulation': {
+    en: 'Better insulation / passive sealing',
+    hi: 'बेहतर इंसुलेशन / निष्क्रिय सीलिंग'
+  },
   'impact.heatWoodCoal': { en: 'Wood / coal / kerosene heating', hi: 'लकड़ी / कोयला / मिट्टी का तेल' },
   'impact.outdoorHours': { en: 'Hours spent outdoors per day', hi: 'प्रतिदिन बाहर बिताए घंटे' },
   'impact.hoursPerDay': { en: 'hours per day', hi: 'घंटे प्रतिदिन' },
@@ -115,7 +121,7 @@ export const impactStrings = {
   'impact.resiliencePoints': {
     en: 'Family resilience points',
     hi: 'परिवार सहनशीलता अंक'
-  },
+  }
 
   // ---- Chat -------------------------------------------------------------
 };

@@ -1,5 +1,15 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
-import { Wind, MapPin, Lock, HeartPulse, Search, X, Languages, ShieldCheck, Settings } from 'lucide-react';
+import {
+  Wind,
+  MapPin,
+  Lock,
+  HeartPulse,
+  Search,
+  X,
+  Languages,
+  ShieldCheck,
+  Settings
+} from 'lucide-react';
 import Modal from './Modal';
 import { useLanguage } from '../i18n/languageContext.js';
 import {
@@ -113,7 +123,8 @@ export default function Navbar({
 
       let nextIndex = null;
       if (event.key === 'ArrowRight') nextIndex = (index + 1) % navItems.length;
-      else if (event.key === 'ArrowLeft') nextIndex = (index - 1 + navItems.length) % navItems.length;
+      else if (event.key === 'ArrowLeft')
+        nextIndex = (index - 1 + navItems.length) % navItems.length;
       else if (event.key === 'Home') nextIndex = 0;
       else if (event.key === 'End') nextIndex = navItems.length - 1;
 
@@ -309,7 +320,8 @@ export default function Navbar({
             <div className="hidden lg:flex flex-col items-end leading-tight px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs font-semibold">
               <span className="flex items-center gap-1.5">
                 <HeartPulse className="w-3.5 h-3.5 text-emerald-600" aria-hidden="true" />
-                {t('nav.avoided')}: <strong>{avoidedCigarettesTotal}</strong> {t('nav.cigEquivalent')}
+                {t('nav.avoided')}: <strong>{avoidedCigarettesTotal}</strong>{' '}
+                {t('nav.cigEquivalent')}
               </span>
               <span className="text-[11px] font-medium text-emerald-800">
                 {savedCo2Total} kg CO2 • {t('impact.resiliencePoints')} {resiliencePoints}

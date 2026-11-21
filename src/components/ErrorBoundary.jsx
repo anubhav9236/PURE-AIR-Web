@@ -34,7 +34,8 @@ export default class ErrorBoundary extends React.Component {
             </div>
             <h2 className="text-xl font-bold text-slate-900">Application Recovered Gracefully</h2>
             <p className="text-xs text-slate-600 leading-relaxed">
-              PureAir Life encountered an unexpected state. Your environmental telemetry and saved routines are preserved.
+              PureAir Life encountered an unexpected state. Your environmental telemetry and saved
+              routines are preserved.
             </p>
             <button
               onClick={this.handleReset}

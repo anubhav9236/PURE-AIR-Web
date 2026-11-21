@@ -106,9 +106,7 @@ function packageNameOf(specifier) {
  * @returns {string}
  */
 function stripComments(source) {
-  return source
-    .replace(/\/\*[\s\S]*?\*\//g, ' ')
-    .replace(/(^|[^:])\/\/[^\n]*/g, '$1');
+  return source.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|[^:])\/\/[^\n]*/g, '$1');
 }
 
 /**
@@ -242,9 +240,7 @@ describe('Deployment integrity', () => {
 
   it('never ships a key-shaped string in the source tree', () => {
     const pattern = /(AIza[0-9A-Za-z_-]{20,}|AQ\.Ab8[0-9A-Za-z_-]{20,})/;
-    const offenders = files
-      .filter(({ source }) => pattern.test(source))
-      .map(({ file }) => file);
+    const offenders = files.filter(({ source }) => pattern.test(source)).map(({ file }) => file);
 
     expect(offenders).toEqual([]);
   });

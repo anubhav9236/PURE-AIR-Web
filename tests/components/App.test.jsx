@@ -60,9 +60,7 @@ describe('App shell', () => {
     // The dashboard must label the city figures as a modelled reference
     // baseline, never as a live monitoring feed.
     expect(screen.getByText('Reference baseline')).toBeInTheDocument();
-    expect(
-      screen.getByTitle(/not a live monitoring feed/i)
-    ).toBeInTheDocument();
+    expect(screen.getByTitle(/not a live monitoring feed/i)).toBeInTheDocument();
   });
 });
 

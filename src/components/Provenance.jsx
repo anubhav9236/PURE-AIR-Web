@@ -40,12 +40,7 @@ const VARIANTS = {
  * @param {string} [props.title] Tooltip / accessible description
  * @param {string} [props.className]
  */
-export default function Provenance({
-  variant = 'reference',
-  label,
-  title,
-  className = ''
-}) {
+export default function Provenance({ variant = 'reference', label, title, className = '' }) {
   const { lang } = useLanguage();
   const config = VARIANTS[variant] || VARIANTS.reference;
   const Icon = config.icon;

@@ -72,4 +72,3 @@ export default function triggerConfetti({ particleCount = 50, spread = 60 } = {}
     console.warn('Confetti trigger skipped:', e);
   }
 }
-

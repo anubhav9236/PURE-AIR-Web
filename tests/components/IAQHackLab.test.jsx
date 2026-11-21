@@ -110,7 +110,9 @@ describe('IAQHackLab', () => {
   it('states the WHO guideline verdict for the filtered indoor estimate', () => {
     renderHackLab();
 
-    const verdict = screen.getByText(/meets the who 24-hour guideline|above the who 24-hour guideline/i);
+    const verdict = screen.getByText(
+      /meets the who 24-hour guideline|above the who 24-hour guideline/i
+    );
     expect(verdict).toBeInTheDocument();
   });
 
@@ -123,7 +125,9 @@ describe('IAQHackLab', () => {
   it('lists the DIY hack catalogue with cost and time for each entry', () => {
     renderHackLab();
 
-    expect(screen.getByRole('heading', { name: /emergency thermal window bubble-glazing/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: /emergency thermal window bubble-glazing/i })
+    ).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /damp towel/i })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /activated carbon/i })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /cardboard shroud/i })).toBeInTheDocument();
@@ -141,7 +145,9 @@ describe('IAQHackLab', () => {
     renderHackLab();
     const sealed = screen.getByRole('button', { name: /^fully sealed$/i });
     expect(sealed).toHaveAttribute('aria-pressed', 'false');
-    expect(within(screen.getByRole('group', { name: /room sealing condition/i })).getAllByRole('button')).toHaveLength(4);
+    expect(
+      within(screen.getByRole('group', { name: /room sealing condition/i })).getAllByRole('button')
+    ).toHaveLength(4);
   });
 
   it('raises CADR for a higher MERV rating', async () => {

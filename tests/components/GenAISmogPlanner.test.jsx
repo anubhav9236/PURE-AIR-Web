@@ -90,7 +90,9 @@ describe('GenAISmogPlanner', () => {
   it('shows an empty state before any routine is generated', () => {
     stubProvider(ROUTINE_PAYLOAD);
     renderPlanner();
-    expect(screen.getByRole('heading', { name: /no schedule formulated yet/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: /no schedule formulated yet/i })
+    ).toBeInTheDocument();
   });
 
   it('renders the household profile form with accessible labels', () => {
@@ -123,7 +125,9 @@ describe('GenAISmogPlanner', () => {
 
     await user.click(screen.getByRole('button', { name: /generate my routine/i }));
 
-    expect(await screen.findByRole('heading', { name: 'Shield the school run' })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: 'Shield the school run' })
+    ).toBeInTheDocument();
 
     // The request went to the same-origin proxy, never to the provider host.
     expect(fetchMock).toHaveBeenCalled();

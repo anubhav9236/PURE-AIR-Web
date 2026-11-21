@@ -86,6 +86,33 @@ else if (!existsSync(join(distDir, entry[1].replace(/^\//, '')))) {
   problems.push(`index.html points at a missing bundle: ${entry[1]}`);
 }
 
+// ---- 5. the enforced policy carries the directives a <meta> cannot ---------
+// `frame-ancestors` is ignored when the policy is delivered through a <meta>
+// element, so it must arrive as a real HTTP header instead.
+const vercelConfig = JSON.parse(readFileSync(join(root, 'vercel.json'), 'utf8'));
+const headerPolicy = (vercelConfig.headers ?? [])
+  .flatMap((headerEntry) => headerEntry.headers ?? [])
+  .find((header) => header.key.toLowerCase() === 'content-security-policy')?.value;
+
+if (!headerPolicy) {
+  problems.push('vercel.json does not send a Content-Security-Policy header');
+} else {
+  if (!/frame-ancestors 'none'/.test(headerPolicy)) {
+    problems.push("the enforced Content-Security-Policy does not set frame-ancestors 'none'");
+  }
+  if (!/script-src 'self'/.test(headerPolicy)) {
+    problems.push("the enforced Content-Security-Policy does not restrict script-src to 'self'");
+  }
+  if (!/object-src 'none'/.test(headerPolicy)) {
+    problems.push("the enforced Content-Security-Policy does not set object-src 'none'");
+  }
+}
+if (/frame-ancestors/.test(csp?.[1] ?? '')) {
+  problems.push(
+    'the <meta> Content-Security-Policy carries frame-ancestors, which browsers ignore there'
+  );
+}
+
 console.log(`Scanned ${files.length} built file(s) in dist/.`);
 if (problems.length === 0) {
   console.log('Build output audit: OK (no secrets, no CDN, CSP present, entry present).');

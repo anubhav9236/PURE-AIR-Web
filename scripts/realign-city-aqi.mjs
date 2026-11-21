@@ -12,7 +12,6 @@ import { calculateAQIFromPM25 } from '../src/services/telemetry/aqi.js';
 
 const FILE = 'src/services/telemetry/cityCatalogue.js';
 
-
 const STATUS_BY_CATEGORY = {
   Good: 'Good',
   Moderate: 'Moderate',
@@ -41,7 +40,26 @@ const changes = [];
 
 const output = source.replace(
   pattern,
-  (_match, aqiRaw, s1, pm25Raw, s2, pm10Raw, s3, no2Raw, s4, tempRaw, s5, humidityRaw, s6, inversion, s7, smogType, s8, status) => {
+  (
+    _match,
+    aqiRaw,
+    s1,
+    pm25Raw,
+    s2,
+    pm10Raw,
+    s3,
+    no2Raw,
+    s4,
+    tempRaw,
+    s5,
+    humidityRaw,
+    s6,
+    inversion,
+    s7,
+    smogType,
+    s8,
+    status
+  ) => {
     replaced += 1;
     const derived = calculateAQIFromPM25(Number(pm25Raw));
     const nextStatus = STATUS_BY_CATEGORY[categoryFor(derived)];

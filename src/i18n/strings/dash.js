@@ -6,7 +6,7 @@
 export const dashStrings = {
   'dash.title': { en: 'Smog Shield Dashboard', hi: 'स्मॉग शील्ड डैशबोर्ड' },
   'dash.subtitle': {
-    en: 'Your city baseline, today\'s smog traps and what to do about them.',
+    en: "Your city baseline, today's smog traps and what to do about them.",
     hi: 'आपके शहर का आधार, आज के धुएँ के जाल और उससे बचने के उपाय।'
   },
   'dash.referenceBaseline': { en: 'Reference baseline', hi: 'संदर्भ आधार' },
@@ -85,7 +85,7 @@ export const dashStrings = {
   'dash.dangerouslyAbove': { en: 'DANGEROUSLY ABOVE', hi: 'क़तर से ऊपर' },
   'dash.withinLimit': { en: 'within', hi: 'सीमा के भीतर' },
   'dash.toleranceLimit': { en: 'their tolerance limit.', hi: 'उनकी सहनशीलता की सीमा।' },
-  'dash.directives': { en: 'Immediate defensive directives', hi: 'तुरंत बचाव के निर्देश' },
+  'dash.directives': { en: 'Immediate defensive directives', hi: 'तुरंत बचाव के निर्देश' }
 
   // ---- Planner ----------------------------------------------------------
 };

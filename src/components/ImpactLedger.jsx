@@ -98,9 +98,7 @@ export default function ImpactLedger({ hotspot, onPledgeCompleted }) {
     if (!target) return;
 
     const nextState = !target.completed;
-    setPledges((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, completed: nextState } : p))
-    );
+    setPledges((prev) => prev.map((p) => (p.id === id ? { ...p, completed: nextState } : p)));
 
     if (nextState) {
       confetti({ particleCount: 60, spread: 50 });
@@ -172,7 +170,9 @@ export default function ImpactLedger({ hotspot, onPledgeCompleted }) {
               >
                 {berkeleyStats.microgramsAvoided.toLocaleString()}
               </span>
-              <span className="text-sm font-bold text-teal-800">µg PM2.5 / {t('impact.perDay')}</span>
+              <span className="text-sm font-bold text-teal-800">
+                µg PM2.5 / {t('impact.perDay')}
+              </span>
             </div>
             <p className="text-xs text-slate-700 mt-2 leading-relaxed font-medium">
               {t('impact.alveolarExplainer')} {hotspot?.name}
@@ -203,7 +203,9 @@ export default function ImpactLedger({ hotspot, onPledgeCompleted }) {
               >
                 {sustainableStats.dailyCo2SavedKg}
               </span>
-              <span className="text-sm font-bold text-amber-900">kg CO2 / {t('impact.perDay')}</span>
+              <span className="text-sm font-bold text-amber-900">
+                kg CO2 / {t('impact.perDay')}
+              </span>
             </div>
             <p className="text-xs text-slate-700 mt-2 leading-relaxed font-medium">
               {t('impact.communityExplainer')}{' '}
@@ -229,7 +231,9 @@ export default function ImpactLedger({ hotspot, onPledgeCompleted }) {
             >
               {t('impact.lifestyleTitle')}
             </h2>
-            <p className="text-xs sm:text-sm text-slate-700 mt-0.5">{t('impact.lifestyleExplainer')}</p>
+            <p className="text-xs sm:text-sm text-slate-700 mt-0.5">
+              {t('impact.lifestyleExplainer')}
+            </p>
           </div>
           <Provenance variant="estimated" label={t('dash.estimated')} />
         </div>
@@ -325,7 +329,9 @@ export default function ImpactLedger({ hotspot, onPledgeCompleted }) {
               <Award className="w-5 h-5 text-teal-700" aria-hidden="true" />
               {t('impact.checklistTitle')}
             </h2>
-            <p className="text-xs sm:text-sm text-slate-700 mt-0.5">{t('impact.checklistExplainer')}</p>
+            <p className="text-xs sm:text-sm text-slate-700 mt-0.5">
+              {t('impact.checklistExplainer')}
+            </p>
           </div>
 
           <div className="flex items-center gap-2">
@@ -403,10 +409,14 @@ export default function ImpactLedger({ hotspot, onPledgeCompleted }) {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 text-xs">
           <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
             <span className="font-bold text-teal-900 block mb-1">{t('impact.corridorsTitle')}</span>
-            <p className="text-slate-700 text-[11px] leading-relaxed">{t('impact.corridorsBody')}</p>
+            <p className="text-slate-700 text-[11px] leading-relaxed">
+              {t('impact.corridorsBody')}
+            </p>
           </div>
           <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
-            <span className="font-bold text-emerald-900 block mb-1">{t('impact.biomassTitle')}</span>
+            <span className="font-bold text-emerald-900 block mb-1">
+              {t('impact.biomassTitle')}
+            </span>
             <p className="text-slate-700 text-[11px] leading-relaxed">{t('impact.biomassBody')}</p>
           </div>
           <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">

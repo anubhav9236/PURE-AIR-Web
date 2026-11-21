@@ -98,9 +98,7 @@ describe('Provider transport', () => {
       const fetchMock = vi.fn();
       vi.stubGlobal('fetch', fetchMock);
 
-      await expect(callGeminiApi({ prompt: '   ' })).rejects.toBeInstanceOf(
-        GeminiUnavailableError
-      );
+      await expect(callGeminiApi({ prompt: '   ' })).rejects.toBeInstanceOf(GeminiUnavailableError);
       expect(fetchMock).not.toHaveBeenCalled();
     });
 
@@ -155,10 +153,7 @@ describe('Provider transport', () => {
     });
 
     it('reports a provider that is not configured', async () => {
-      vi.stubGlobal(
-        'fetch',
-        proxyResponds({ ok: false, code: 'provider_not_configured' }, 503)
-      );
+      vi.stubGlobal('fetch', proxyResponds({ ok: false, code: 'provider_not_configured' }, 503));
 
       await expect(callGeminiApi({ prompt: 'x' })).rejects.toMatchObject({
         reason: 'provider_not_configured'
@@ -284,9 +279,7 @@ describe('Provider transport', () => {
       // The proxy reason is what the caller sees. The guarantee that matters
       // is that a failure inside the direct path is handled cleanly instead
       // of throwing a raw ReferenceError out of the transport.
-      await expect(callGeminiApi({ prompt: 'x' })).rejects.toBeInstanceOf(
-        GeminiUnavailableError
-      );
+      await expect(callGeminiApi({ prompt: 'x' })).rejects.toBeInstanceOf(GeminiUnavailableError);
       await expect(callGeminiApi({ prompt: 'x' })).rejects.toMatchObject({
         reason: 'proxy_unavailable'
       });
@@ -305,9 +298,7 @@ describe('Provider transport', () => {
       vi.stubGlobal('fetch', fetchMock);
       setClientSuppliedKey('test-session-key-0123456789abcdef');
 
-      await expect(callGeminiApi({ prompt: 'x' })).rejects.toBeInstanceOf(
-        GeminiUnavailableError
-      );
+      await expect(callGeminiApi({ prompt: 'x' })).rejects.toBeInstanceOf(GeminiUnavailableError);
       await expect(callGeminiApi({ prompt: 'x' })).rejects.toMatchObject({
         reason: 'proxy_unavailable'
       });

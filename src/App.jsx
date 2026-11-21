@@ -27,7 +27,9 @@ function WorkspaceFallback() {
       aria-live="polite"
     >
       <div className="w-10 h-10 rounded-full border-4 border-teal-200 border-t-teal-600 animate-spin" />
-      <p className="text-sm font-semibold text-slate-600">{t('app.loading', 'Loading workspace…')}</p>
+      <p className="text-sm font-semibold text-slate-600">
+        {t('app.loading', 'Loading workspace…')}
+      </p>
     </div>
   );
 }

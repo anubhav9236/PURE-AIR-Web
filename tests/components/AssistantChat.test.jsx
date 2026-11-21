@@ -145,9 +145,7 @@ describe('Assistant chat interaction', () => {
       // The greeting is also an offline message, so more than one badge may
       // legitimately carry this label - what matters is that it is present and
       // that no badge claims a live model response.
-      const badges = screen.getAllByText(
-        /Offline clean-air guide \(no AI provider available\)/i
-      );
+      const badges = screen.getAllByText(/Offline clean-air guide \(no AI provider available\)/i);
       expect(badges.length).toBeGreaterThan(0);
     }, WAIT);
 
@@ -200,7 +198,8 @@ describe('Assistant chat interaction', () => {
     }, WAIT);
   });
 
-  it('does not send an empty message', async () => {    const user = userEvent.setup();
+  it('does not send an empty message', async () => {
+    const user = userEvent.setup();
     renderChat();
 
     const send = screen.getByRole('button', { name: /^send$/i });

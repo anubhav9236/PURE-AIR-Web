@@ -1,6 +1,6 @@
 /**
  * PureAir Life — Indoor Air Quality & Environmental Calculator
- * 
+ *
  * Implements physics and epidemiological formulas:
  * 1. Corsi-Rosenthal Box Clean Air Delivery Rate (CADR) & Air Changes per Hour (ACH)
  *    Based on UC Davis & Prather et al. building aerosol dynamics
@@ -20,7 +20,7 @@ export const WHO_ANNUAL_PM25_LIMIT = 5.0;
 const FILTER_EFFICIENCY = {
   merv11: 0.65,
   merv13: 0.85,
-  merv14: 0.90,
+  merv14: 0.9,
   hepa: 0.9997
 };
 
@@ -57,13 +57,15 @@ export function calculateCRBoxCADR({
   const efficiency = FILTER_EFFICIENCY[filterRating] || 0.85;
 
   // Pressure drop reduction factor: more filter surface area lowers static pressure
-  const surfaceAreaFactor = filterCount >= 5 ? 0.72 : filterCount === 4 ? 0.65 : 0.50;
+  const surfaceAreaFactor = filterCount >= 5 ? 0.72 : filterCount === 4 ? 0.65 : 0.5;
 
   // Shroud eliminates reverse airflow at the fan face.
   // 0.88 x 1.15 = 1.012 vs 0.75 x 1.0 = 0.75  ->  +35% effective clean-air
   // delivery, which is the gain quoted in the hack catalogue.
   const operatingAirflowCFM = baseCFM * surfaceAreaFactor * (hasCardboardShroud ? 0.88 : 0.75);
-  const effectiveCADR = Math.round(operatingAirflowCFM * efficiency * (hasCardboardShroud ? 1.15 : 1.0));
+  const effectiveCADR = Math.round(
+    operatingAirflowCFM * efficiency * (hasCardboardShroud ? 1.15 : 1.0)
+  );
 
   // Air Changes per Hour (ACH) = (CADR * 60) / Room Volume
   const ach = Number(((effectiveCADR * 60) / roomVolumeCuFt).toFixed(1));
@@ -78,9 +80,9 @@ export function calculateCRBoxCADR({
   // Sound and economic modeling
   const soundDb = fanSpeed === 'low' ? 44 : fanSpeed === 'medium' ? 51 : 58;
   const wattage = fanSpeed === 'low' ? 52 : fanSpeed === 'medium' ? 68 : 88;
-  const annualEnergyCostUsd = Math.round((wattage * 12 * 365) / 1000 * 0.14); // 12 hrs/day at $0.14/kWh
+  const annualEnergyCostUsd = Math.round(((wattage * 12 * 365) / 1000) * 0.14); // 12 hrs/day at $0.14/kWh
 
-  const diyCost = Math.round(25 + (filterCount * 9) + 6); // $25 fan + filters + tape
+  const diyCost = Math.round(25 + filterCount * 9 + 6); // $25 fan + filters + tape
   const commercialHepaEquivalentCost = Math.round(effectiveCADR * 1.1); // Commercial HEPAs sell for ~$1.10 per CFM CADR
   const savings = Math.max(100, commercialHepaEquivalentCost - diyCost);
 
@@ -120,16 +122,20 @@ export function calculateBerkeleyEarthCigarettes({
 
   // Time-weighted daily mean exposure without proactive IAQ filtration
   const unmanagedIndoorPM = safeOutdoorPM * 0.75; // Standard Indian leaky home ratio
-  const unmanagedDailyMean = ((safeOutdoorPM * outdoorHoursSpent) + (unmanagedIndoorPM * indoorHoursSpent)) / 24;
+  const unmanagedDailyMean =
+    (safeOutdoorPM * outdoorHoursSpent + unmanagedIndoorPM * indoorHoursSpent) / 24;
 
   // Time-weighted daily exposure with PureAir Life proactive routine
-  const managedDailyMean = ((safeOutdoorPM * outdoorHoursSpent) + (safeIndoorPM * indoorHoursSpent)) / 24;
+  const managedDailyMean =
+    (safeOutdoorPM * outdoorHoursSpent + safeIndoorPM * indoorHoursSpent) / 24;
 
   // Delta PM2.5 avoided (µg/m³ time-weighted)
   const deltaPM25 = Math.max(0, unmanagedDailyMean - managedDailyMean);
 
   // Berkeley Earth formula: (Delta PM2.5 / 22) * respiratory multiplier
-  const avoidedCigarettesPerDay = Number(((deltaPM25 / BERKELEY_EARTH_PM25_PER_CIGARETTE) * respiratoryMultiplier).toFixed(1));
+  const avoidedCigarettesPerDay = Number(
+    ((deltaPM25 / BERKELEY_EARTH_PM25_PER_CIGARETTE) * respiratoryMultiplier).toFixed(1)
+  );
   const avoidedCigarettesPerMonth = Math.round(avoidedCigarettesPerDay * 30);
 
   // Daily alveolar particulate mass prevented (Adult breathes ~15 m³ air/day)
@@ -167,13 +173,13 @@ export function calculateSustainableSavings({
 
   if (commuteShift === 'metro' || commuteShift === 'wfh') {
     commuteCo2SavedKg = (commuteKm * ICE_CAR_CO2_PER_KM_GRAMS * 0.85) / 1000;
-    commutePm25SavedGrams = commuteKm * ICE_CAR_PM25_PER_KM_GRAMS * 0.90;
+    commutePm25SavedGrams = commuteKm * ICE_CAR_PM25_PER_KM_GRAMS * 0.9;
   } else if (commuteShift === 'ev') {
     commuteCo2SavedKg = (commuteKm * ICE_CAR_CO2_PER_KM_GRAMS * 0.65) / 1000;
-    commutePm25SavedGrams = commuteKm * ICE_CAR_PM25_PER_KM_GRAMS * 0.40;
+    commutePm25SavedGrams = commuteKm * ICE_CAR_PM25_PER_KM_GRAMS * 0.4;
   } else if (commuteShift === 'carpool') {
-    commuteCo2SavedKg = (commuteKm * ICE_CAR_CO2_PER_KM_GRAMS * 0.50) / 1000;
-    commutePm25SavedGrams = commuteKm * ICE_CAR_PM25_PER_KM_GRAMS * 0.50;
+    commuteCo2SavedKg = (commuteKm * ICE_CAR_CO2_PER_KM_GRAMS * 0.5) / 1000;
+    commutePm25SavedGrams = commuteKm * ICE_CAR_PM25_PER_KM_GRAMS * 0.5;
   }
 
   // Clean Heating Savings vs Biomass/Coal Angithi/Unflued Kerosene
@@ -192,7 +198,10 @@ export function calculateSustainableSavings({
   const dailyPm25SavedGrams = Number((commutePm25SavedGrams + heatingPm25SavedGrams).toFixed(1));
   const monthlyCo2SavedKg = Math.round(dailyCo2SavedKg * 30);
 
-  const communitySmogScore = Math.min(100, Math.round(30 + (dailyCo2SavedKg * 8) + (dailyPm25SavedGrams * 2)));
+  const communitySmogScore = Math.min(
+    100,
+    Math.round(30 + dailyCo2SavedKg * 8 + dailyPm25SavedGrams * 2)
+  );
 
   return {
     dailyCo2SavedKg,
