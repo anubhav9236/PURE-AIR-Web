@@ -161,7 +161,7 @@ npm run dev                   # http://localhost:5173
 |---|---|
 | `lint` | oxlint reports no error and no warning. |
 | `typecheck` | `tsc` reports no type error across `src/`. |
-| `test:coverage` | 347 tests pass and coverage stays above the floors in `vitest.config.js` (88% statements, 80% branches, 84% functions, 90% lines). |
+| `test:coverage` | 350 tests pass and coverage stays above the floors in `vitest.config.js` (88% statements, 80% branches, 84% functions, 90% lines). |
 | `build` | The production Vite build succeeds. |
 | `audit:dist` | The built bundle contains no key, no CDN script and no inline script. |
 | `audit:i18n` | Every catalogue string has a Hindi translation. |
@@ -282,7 +282,7 @@ invents live readings or statistics.
 npm test
 ```
 
-The suite is 347 tests across 24 files and covers telemetry and EPA breakpoint
+The suite is 350 tests across 25 files and covers telemetry and EPA breakpoint
 maths, the CR-box and Berkeley Earth models, the indoor mass-balance model,
 input sanitisation (including that Devanagari survives), model-response schema
 validation, provider failover and fallbacks, the proxy's validation, routing
@@ -362,6 +362,9 @@ Accessibility is **verified, not asserted**:
   cannot evaluate colour contrast. It also fails the build if white text is
   ever placed back on `teal-600` or on a translucent white chip - the two
   combinations that used to miss AA.
+- `tests/accessibility/motion.test.js` guards the `prefers-reduced-motion`
+  block in the shipped stylesheet (WCAG 2.3.3): animations, transitions and
+  hover transforms must all be neutralised for users who ask for less motion.
 - The same axe-core audit was run against the built application in a real
   browser, at every scroll position of every workspace, and reports **zero**
   violations - including colour contrast, which only a real browser can check.
