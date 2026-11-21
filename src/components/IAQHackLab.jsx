@@ -54,7 +54,7 @@ const HACKS_CATALOG = [
 
 /**
  * @param {object} props
- * @param {object} props.hotspot
+ * @param {import('../types').CityRecord} props.hotspot
  */
 export default function IAQHackLab({ hotspot }) {
   const { t } = useLanguage();

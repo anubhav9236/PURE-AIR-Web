@@ -20,7 +20,7 @@ import { translatePhrase } from '../i18n/phrases.js';
 
 /**
  * @param {object} props
- * @param {object} props.hotspot
+ * @param {import('../types').CityRecord} props.hotspot
  * @param {() => void} [props.onLogRoutineCompleted]
  */
 export default function GenAISmogPlanner({ hotspot, onLogRoutineCompleted }) {
@@ -377,7 +377,7 @@ export default function GenAISmogPlanner({ hotspot, onLogRoutineCompleted }) {
                   const isDone = Boolean(completedBlocks[idx]);
                   return (
                     <li
-                      key={idx}
+                      key={`${block.time}-${block.phase}`}
                       className={`p-4 sm:p-5 rounded-2xl border transition-all duration-200 ${
                         isDone
                           ? 'bg-emerald-50/60 border-emerald-300'

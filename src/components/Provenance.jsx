@@ -35,7 +35,7 @@ const VARIANTS = {
 
 /**
  * @param {object} props
- * @param {'live' | 'estimated' | 'advisory' | 'reference'} props.variant
+ * @param {import('../types').ProvenanceKind} [props.variant]
  * @param {string} [props.label] Override the default label
  * @param {string} [props.title] Tooltip / accessible description
  * @param {string} [props.className]

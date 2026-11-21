@@ -40,6 +40,37 @@ async function sendMessage(user, text) {
   await user.click(screen.getByRole('button', { name: /^send$/i }));
 }
 
+/**
+ * Install a fake Web Speech API.
+ *
+ * The jsdom environment exposes `speechSynthesis` as a writable but
+ * non-configurable property, so the globals are replaced by assignment and
+ * restored afterwards. The fake utterance extends `EventTarget` so it behaves
+ * like the real `SpeechSynthesisUtterance`.
+ *
+ * @returns {{ speak: import('vitest').Mock, cancel: import('vitest').Mock }}
+ */
+function stubSpeech() {
+  class FakeUtterance extends EventTarget {
+    /**
+     * @param {string} text
+     */
+    constructor(text) {
+      super();
+      this.text = text;
+      this.rate = 1;
+      this.pitch = 1;
+      this.lang = 'en-IN';
+    }
+  }
+
+  const speak = vi.fn();
+  const cancel = vi.fn();
+  window.SpeechSynthesisUtterance = FakeUtterance;
+  window.speechSynthesis = { speak, cancel };
+  return { speak, cancel };
+}
+
 beforeEach(() => {
   localStorage.clear();
   sessionStorage.clear();
@@ -211,5 +242,47 @@ describe('Assistant chat interaction', () => {
 
     await user.click(screen.getByRole('button', { name: /clear conversation/i }));
     expect(screen.queryByText('a question')).not.toBeInTheDocument();
+  });
+});
+
+describe('Assistant read-aloud', () => {
+  afterEach(() => {
+    // Leave the environment without a Web Speech API for the next test.
+    window.speechSynthesis = undefined;
+    window.SpeechSynthesisUtterance = undefined;
+  });
+
+  it('speaks the answer and stops again on a second press', async () => {
+    const { speak, cancel } = stubSpeech();
+    const user = userEvent.setup();
+    renderChat();
+
+    const readAloud = screen.getAllByRole('button', { name: /read this answer aloud/i })[0];
+    await user.click(readAloud);
+
+    expect(speak).toHaveBeenCalledTimes(1);
+    expect(speak.mock.calls[0][0].text).toMatch(/hello! i am your pureair life ai assistant/i);
+    expect(readAloud).toHaveTextContent(/stop/i);
+
+    // A second press cancels the running utterance and resets the control.
+    await user.click(readAloud);
+    expect(cancel).toHaveBeenCalled();
+    expect(speak).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(readAloud).toHaveTextContent(/listen/i);
+    }, WAIT);
+  });
+
+  it('does nothing when the browser has no usable speech synthesis', async () => {
+    // Some environments expose the API partially (or not at all), so the
+    // control must degrade quietly instead of throwing.
+    window.speechSynthesis = undefined;
+    const user = userEvent.setup();
+    renderChat();
+
+    const readAloud = screen.getAllByRole('button', { name: /read this answer aloud/i })[0];
+    await user.click(readAloud);
+
+    expect(readAloud).toHaveTextContent(/listen/i);
   });
 });

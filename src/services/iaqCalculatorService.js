@@ -69,11 +69,11 @@ export function calculateCRBoxCADR({
   const ach = Number(((effectiveCADR * 60) / roomVolumeCuFt).toFixed(1));
 
   // Particle clearance times based on first-order exponential decay: C(t) = C0 * exp(-ACH * t)
-  // For 90% clearance: ln(10) / ACH * 60 mins = 2.3026 / ACH * 60
-  // For 99% clearance: ln(100) / ACH * 60 mins = 4.605 / ACH * 60
+  // For 90% clearance: ln(10) / ACH * 60 mins = Math.LN10 / ACH * 60
+  // For 99% clearance: ln(100) / ACH * 60 mins = 2 * Math.LN10 / ACH * 60
   const effectiveACH = Math.max(0.5, ach);
-  const minutesToClear90 = Math.round((2.3026 / effectiveACH) * 60);
-  const minutesToClear99 = Math.round((4.605 / effectiveACH) * 60);
+  const minutesToClear90 = Math.round((Math.LN10 / effectiveACH) * 60);
+  const minutesToClear99 = Math.round(((2 * Math.LN10) / effectiveACH) * 60);
 
   // Sound and economic modeling
   const soundDb = fanSpeed === 'low' ? 44 : fanSpeed === 'medium' ? 51 : 58;

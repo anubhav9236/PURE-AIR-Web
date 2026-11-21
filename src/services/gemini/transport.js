@@ -9,6 +9,28 @@
 import { getClientSuppliedKey } from './sessionKey.js';
 
 /**
+ * One outbound provider request.
+ *
+ * @typedef {Object} ProviderRequest
+ * @property {string} prompt the user prompt
+ * @property {string} [systemInstruction] system role instruction
+ * @property {string} [imageBase64] base64 image for the vision workflow
+ * @property {string} [mimeType] MIME type of {@link ProviderRequest.imageBase64}
+ * @property {{ role: string, text: string }[]} [history] earlier conversation turns
+ */
+
+/**
+ * The outcome of one provider call.
+ *
+ * @typedef {Object} ProviderResult
+ * @property {boolean} ok whether the call produced usable text
+ * @property {string} [text] the model text
+ * @property {string} [model] the model that answered
+ * @property {string} [reason] machine-readable failure reason
+ * @property {number} [status] the HTTP status, when there was a response
+ */
+
+/**
  * Provider status is a `GET` on the same path as the proxy, so a single
  * serverless function (Vercel) or a single Node route covers the whole API.
  * The legacy `GET /api/gemini/status` path is still accepted server-side.
@@ -88,8 +110,8 @@ async function throttle() {
 
 /**
  * Call the same-origin proxy.
- * @param {object} request
- * @returns {Promise<{ ok: boolean, text?: string, model?: string, reason?: string, status?: number }>}
+ * @param {ProviderRequest} request
+ * @returns {Promise<ProviderResult>}
  */
 async function callViaProxy(request) {
   let response;
@@ -135,9 +157,9 @@ async function callViaProxy(request) {
 /**
  * Call Google Gemini directly using a user-supplied key.
  * Only used when the server proxy is not deployed on this host.
- * @param {object} request
+ * @param {ProviderRequest} request
  * @param {string} apiKey
- * @returns {Promise<{ ok: boolean, text?: string, model?: string, reason?: string }>}
+ * @returns {Promise<ProviderResult>}
  */
 async function callDirect(request, apiKey) {
   const models = ['gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-3.5-flash'];
@@ -184,7 +206,7 @@ async function callDirect(request, apiKey) {
       if (response.status === 429) lastReason = 'rate_limited';
       else if (response.status === 401 || response.status === 403) lastReason = 'provider_auth_failed';
       else lastReason = 'provider_unavailable';
-    } catch {
+    } catch (error) {
       lastReason = error?.name === 'AbortError' ? 'provider_timeout' : 'provider_network_error';
     } finally {
       clearTimeout(timer);

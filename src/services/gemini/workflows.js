@@ -109,7 +109,7 @@ export function detectImageMimeType(dataUrl) {
  * @param {string} roomType
  * @param {string} userNotes
  * @param {'en' | 'hi'} [lang]
- * @param {object|null} [context] City baseline used to ground the analysis
+ * @param {import('../../types').CityRecord|null} [context] City baseline used to ground the analysis
  * @returns {Promise<Object>} audit with `source` ('live' | 'fallback')
  */
 export async function analyzeRoomIAQ(imageBase64, roomType, userNotes, lang = 'en', context = null) {
@@ -157,7 +157,7 @@ Return JSON with this structure:
     const result = await callGeminiApi({
       prompt: userPrompt,
       systemInstruction: systemPrompt,
-      imageBase64: imageBase64,
+      imageBase64,
       mimeType: detectImageMimeType(imageBase64)
     });
     const parsed = parseModelJson(result.text);

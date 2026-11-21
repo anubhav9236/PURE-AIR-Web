@@ -20,7 +20,7 @@ const MAX_UPLOAD_EDGE = 1280;
 const UPLOAD_QUALITY = 0.82;
 
 /** Accepted upload MIME types. */
-const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+const ACCEPTED_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 
 /**
  * Re-encode an uploaded photo as a smaller JPEG.
@@ -107,7 +107,7 @@ const SAMPLES = [
 
 /**
  * @param {object} props
- * @param {object} props.hotspot
+ * @param {import('../types').CityRecord} props.hotspot
  */
 export default function IAQRoomScanner({ hotspot }) {
   const { t, lang } = useLanguage();
@@ -125,7 +125,7 @@ export default function IAQRoomScanner({ hotspot }) {
 
   /**
    * Validate and read an uploaded image.
-   * @param {Event} event
+   * @param {import('react').ChangeEvent<HTMLInputElement>} event
    */
   const handleFileUpload = (event) => {
     const file = event.target.files?.[0];
@@ -136,7 +136,7 @@ export default function IAQRoomScanner({ hotspot }) {
 
     setUploadError('');
 
-    if (!ACCEPTED_TYPES.includes(file.type)) {
+    if (!ACCEPTED_TYPES.has(file.type)) {
       setUploadError(t('scanner.fileWrongType'));
       setSelectedImage(null);
       return;
@@ -149,21 +149,21 @@ export default function IAQRoomScanner({ hotspot }) {
     }
 
     const reader = new FileReader();
-    reader.onload = async (loadEvent) => {
-      const original = loadEvent.target.result;
+    reader.addEventListener('load', async (loadEvent) => {
+      const original = loadEvent.target?.result;
       // Downscale before uploading so the base64 payload stays within the
       // serverless request-body limit. Falls back to the original file.
       const scaled = await downscaleImage(file);
       setSelectedImage(
-        scaled && scaled.length < original.length ? scaled : original
+        scaled && original && scaled.length < String(original).length ? scaled : original
       );
       setSelectedSample(null);
       setAuditResult(null);
-    };
-    reader.onerror = () => {
+    });
+    reader.addEventListener('error', () => {
       setUploadError(t('scanner.fileReadFailed'));
       setSelectedImage(null);
-    };
+    });
     reader.readAsDataURL(file);
   };
 
@@ -421,9 +421,9 @@ export default function IAQRoomScanner({ hotspot }) {
                       {t('scanner.vulnerabilities')}
                     </span>
                     <ul className="space-y-1.5 list-none p-0 m-0">
-                      {auditResult.primaryVulnerabilities.map((vuln, i) => (
+                      {auditResult.primaryVulnerabilities.map((vuln) => (
                         <li
-                          key={i}
+                          key={vuln}
                           className="flex items-start gap-2 text-xs sm:text-sm text-slate-700 font-medium"
                         >
                           <span className="text-rose-700 font-bold shrink-0" aria-hidden="true">
@@ -443,9 +443,9 @@ export default function IAQRoomScanner({ hotspot }) {
                 </span>
 
                 <ol className="space-y-3 list-none p-0 m-0">
-                  {auditResult.stepByStepFixes.map((item, idx) => (
+                  {auditResult.stepByStepFixes.map((item) => (
                     <li
-                      key={idx}
+                      key={item.step}
                       className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 hover:border-teal-300 transition shadow-sm space-y-2"
                     >
                       <div className="flex flex-wrap items-center justify-between gap-2">

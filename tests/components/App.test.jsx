@@ -3,6 +3,16 @@ import { render, screen, within, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../../src/App.jsx';
 
+/**
+ * The application nav is the first tablist on the page; the dashboard also
+ * renders a vulnerability-profile tablist further down.
+ *
+ * @returns {HTMLElement}
+ */
+function navTablist() {
+  return screen.getAllByRole('tablist')[0];
+}
+
 beforeEach(() => {
   // The language preference and any session key persist between renders.
   localStorage.clear();
@@ -36,7 +46,7 @@ describe('App shell', () => {
     render(<App />);
     const skip = screen.getByRole('link', { name: /skip to main content/i });
     expect(skip).toHaveAttribute('href', '#main-content');
-    expect(document.getElementById('main-content')).toBeTruthy();
+    expect(document.querySelector('#main-content')).toBeTruthy();
   });
 
   it('renders a banner landmark and a contentinfo landmark', () => {
@@ -57,15 +67,6 @@ describe('App shell', () => {
 });
 
 describe('Navigation', () => {
-  /**
-   * The application nav is the first tablist on the page; the dashboard also
-   * renders a vulnerability-profile tablist further down.
-   * @returns {HTMLElement}
-   */
-  function navTablist() {
-    return screen.getAllByRole('tablist')[0];
-  }
-
   it('renders every workspace as a tab', () => {
     render(<App />);
     const tabs = within(navTablist()).getAllByRole('tab');
@@ -113,7 +114,7 @@ describe('Navigation', () => {
     const tab = within(navTablist()).getAllByRole('tab')[0];
     const panelId = tab.getAttribute('aria-controls');
     expect(panelId).toBeTruthy();
-    expect(document.getElementById(panelId)).toBeTruthy();
+    expect(document.querySelector(`#${panelId}`)).toBeTruthy();
   });
 });
 

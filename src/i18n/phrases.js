@@ -12,7 +12,7 @@
  */
 
 /**
- * @typedef {'en' | 'hi'} PhraseLanguage
+ * @typedef {import('../types').Language} PhraseLanguage
  */
 
 /** @type {Record<string, string>} English source string -> Hindi text. */

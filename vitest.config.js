@@ -15,16 +15,16 @@ export default defineConfig({
     hookTimeout: 30000,
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'html', 'json-summary'],
+      reporter: ['text', 'html', 'json-summary', 'lcov'],
       include: ['src/**/*.{js,jsx}'],
       exclude: ['src/main.jsx'],
       // A regression gate, not a target: the suite must never drop below
       // these floors, and raising them is part of the normal workflow.
       thresholds: {
-        statements: 80,
-        branches: 75,
-        functions: 78,
-        lines: 84
+        statements: 88,
+        branches: 80,
+        functions: 84,
+        lines: 90
       }
     }
   }

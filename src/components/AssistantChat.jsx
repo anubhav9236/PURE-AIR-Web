@@ -18,23 +18,33 @@ const MAX_INPUT_CHARS = 1000;
  * @returns {React.ReactNode[]}
  */
 function renderEmphasis(text) {
+  // Keys are derived from the content itself (plus an occurrence counter) so
+  // React can match nodes across re-renders without relying on array order.
+  const occurrences = new Map();
+
   return String(text)
     .split(/(\*\*[^*]+\*\*)/g)
     .filter((part) => part.length > 0)
-    .map((part, index) =>
-      part.startsWith('**') && part.endsWith('**') && part.length > 4 ? (
-        <strong key={index} className="font-extrabold text-slate-900">
+    .map((part) => {
+      const isBold = part.startsWith('**') && part.endsWith('**') && part.length > 4;
+      const base = `${isBold ? 'bold' : 'plain'}:${part}`;
+      const seen = occurrences.get(base) ?? 0;
+      occurrences.set(base, seen + 1);
+      const key = seen === 0 ? base : `${base}#${seen}`;
+
+      return isBold ? (
+        <strong key={key} className="font-extrabold text-slate-900">
           {part.slice(2, -2)}
         </strong>
       ) : (
-        <span key={index}>{part}</span>
-      )
-    );
+        <span key={key}>{part}</span>
+      );
+    });
 }
 
 /**
  * @param {object} props
- * @param {object} props.hotspot
+ * @param {import('../types').CityRecord} props.hotspot
  */
 export default function AssistantChat({ hotspot }) {
   const { t, lang } = useLanguage();
@@ -50,7 +60,9 @@ export default function AssistantChat({ hotspot }) {
     timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
   });
 
-  const [messages, setMessages] = useState(() => [buildGreeting()]);
+  const [messages, setMessages] = useState(
+    /** @type {import('../types').ChatMessage[]} */ ([buildGreeting()])
+  );
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [speechActive, setSpeechActive] = useState(false);
@@ -59,14 +71,21 @@ export default function AssistantChat({ hotspot }) {
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
+    if (messages.length === 0) return;
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   useEffect(() => {
     let cancelled = false;
-    getProviderStatus().then((status) => {
-      if (!cancelled) setProviderLive(status.configured === true);
-    });
+    getProviderStatus()
+      .then((status) => {
+        if (!cancelled) setProviderLive(status.configured === true);
+        return status;
+      })
+      .catch(() => {
+        // Probing is best-effort - the chat simply stays in reference mode.
+        return null;
+      });
     return () => {
       cancelled = true;
     };
@@ -96,12 +115,12 @@ export default function AssistantChat({ hotspot }) {
     const query = (textToSend ?? input).trim().slice(0, MAX_INPUT_CHARS);
     if (!query || loading) return;
 
-    const userMsg = {
+    const userMsg = /** @type {import('../types').ChatMessage} */ ({
       id: `u-${Date.now()}`,
       sender: 'user',
       text: query,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    };
+    });
 
     // Capture the history BEFORE appending, so the model receives prior turns.
     const history = messages
@@ -117,20 +136,20 @@ export default function AssistantChat({ hotspot }) {
 
     try {
       const response = await askSmogAssistant(query, history, hotspot, lang);
-      const botMsg = {
+      const botMsg = /** @type {import('../types').ChatMessage} */ ({
         id: `b-${Date.now()}`,
         sender: 'bot',
         text: response.text,
         source: response.source,
         model: response.model || '',
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      };
+      });
       setMessages((prev) => [...prev, botMsg]);
       setLastSource(response.source);
     } catch {
       setMessages((prev) => [
         ...prev,
-        {
+        /** @type {import('../types').ChatMessage} */ ({
           id: `e-${Date.now()}`,
           sender: 'bot',
           text: t(
@@ -139,7 +158,7 @@ export default function AssistantChat({ hotspot }) {
           ),
           source: 'fallback',
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        }
+        })
       ]);
     } finally {
       setLoading(false);
@@ -147,27 +166,30 @@ export default function AssistantChat({ hotspot }) {
   };
 
   const speakMessage = (text) => {
-    if (!('speechSynthesis' in window)) return;
+    // Not every environment ships a usable Web Speech API, so check for the
+    // methods we actually call instead of just for the property's presence.
+    const speech = window.speechSynthesis;
+    if (!speech || typeof speech.speak !== 'function') return;
 
     if (speechActive) {
-      window.speechSynthesis.cancel();
+      speech.cancel();
       setSpeechActive(false);
       return;
     }
 
-    window.speechSynthesis.cancel();
+    speech.cancel();
     const utterance = new SpeechSynthesisUtterance(text.replace(/[*#_]/g, ''));
     utterance.rate = 1.0;
     utterance.pitch = 1.0;
     utterance.lang = lang === 'hi' ? 'hi-IN' : 'en-IN';
-    utterance.onend = () => setSpeechActive(false);
-    utterance.onerror = () => setSpeechActive(false);
+    utterance.addEventListener('end', () => setSpeechActive(false));
+    utterance.addEventListener('error', () => setSpeechActive(false));
     setSpeechActive(true);
-    window.speechSynthesis.speak(utterance);
+    speech.speak(utterance);
   };
 
   const clearConversation = () => {
-    setMessages([buildGreeting()]);
+    setMessages([/** @type {import('../types').ChatMessage} */ (buildGreeting())]);
     setInput('');
   };
 
@@ -315,9 +337,9 @@ export default function AssistantChat({ hotspot }) {
           <span className="text-[11px] uppercase font-bold text-slate-600 shrink-0">
             {t('chat.quickPrompts')}
           </span>
-          {suggestedChips.map((chip, i) => (
+          {suggestedChips.map((chip) => (
             <button
-              key={i}
+              key={chip}
               type="button"
               onClick={() => handleSend(chip)}
               className="px-3 py-1 rounded-full text-[11px] font-semibold bg-slate-100 hover:bg-slate-200 text-slate-800 hover:text-slate-900 border border-slate-300 whitespace-nowrap transition"

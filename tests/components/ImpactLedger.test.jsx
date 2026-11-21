@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ImpactLedger from '../../src/components/ImpactLedger.jsx';
 import LanguageProvider from '../../src/i18n/LanguageProvider.jsx';
@@ -111,5 +111,58 @@ describe('Impact ledger interaction', () => {
     expect(screen.getByLabelText(/commute mode/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/home heating source/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/hours spent outdoors per day/i)).toBeInTheDocument();
+  });
+
+  it('recomputes the Berkeley Earth figure when outdoor hours change', () => {
+    renderLedger();
+
+    const before = screen.getByTestId('pm25-per-day').textContent;
+
+    fireEvent.change(screen.getByLabelText(/hours spent outdoors per day/i), {
+      target: { value: '8' }
+    });
+
+    expect(screen.getByTestId('pm25-per-day').textContent).not.toBe(before);
+  });
+
+  it('recomputes the sustainability figures when the heating source changes', async () => {
+    const user = userEvent.setup();
+    renderLedger();
+
+    const before = screen.getByTestId('co2-per-day').textContent;
+
+    await user.selectOptions(screen.getByLabelText(/home heating source/i), 'wood_coal');
+
+    expect(screen.getByTestId('co2-per-day').textContent).not.toBe(before);
+  });
+
+  it('clamps the commute distance to the allowed range', async () => {
+    const user = userEvent.setup();
+    renderLedger();
+
+    const distance = screen.getByLabelText(/daily commute distance/i);
+    const before = screen.getByTestId('co2-per-day').textContent;
+
+    await user.clear(distance);
+    await user.type(distance, '40');
+
+    expect(distance).toHaveValue(40);
+    expect(screen.getByTestId('co2-per-day').textContent).not.toBe(before);
+  });
+
+  it('does not award points again when a pledge is switched back off', async () => {
+    const user = userEvent.setup();
+    const { onPledgeCompleted } = renderLedger();
+
+    const unchecked = screen
+      .getAllByRole('button', { name: /toggle this pledge/i })
+      .find((button) => button.getAttribute('aria-pressed') === 'false');
+
+    await user.click(unchecked);
+    expect(onPledgeCompleted).toHaveBeenCalledTimes(1);
+
+    await user.click(unchecked);
+    expect(onPledgeCompleted).toHaveBeenCalledTimes(1);
+    expect(unchecked.getAttribute('aria-pressed')).toBe('false');
   });
 });

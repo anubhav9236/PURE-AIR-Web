@@ -10,13 +10,19 @@ const STORAGE_KEY = 'pureair.language';
  * Minimal consumer that exercises the language context directly.
  */
 function Probe() {
-  const { lang, t, toggleLang } = useLanguage();
+  const { lang, t, toggleLang, setLang } = useLanguage();
   return (
     <div>
       <span data-testid="lang">{lang}</span>
       <span data-testid="label">{t('nav.dashboard')}</span>
       <button type="button" onClick={toggleLang}>
         toggle
+      </button>
+      <button type="button" onClick={() => setLang('hi')}>
+        set hindi
+      </button>
+      <button type="button" onClick={() => setLang('fr')}>
+        set unsupported
       </button>
     </div>
   );
@@ -121,5 +127,27 @@ describe('Language provider', () => {
 
     spy.mockRestore();
     setSpy.mockRestore();
+  });
+
+  it('sets an explicit language and persists it', async () => {
+    const user = userEvent.setup();
+    renderProbe();
+
+    await user.click(screen.getByRole('button', { name: 'set hindi' }));
+
+    expect(screen.getByTestId('lang')).toHaveTextContent('hi');
+    expect(screen.getByTestId('label')).toHaveTextContent('स्मॉग शील्ड');
+    expect(document.documentElement.lang).toBe('hi');
+    expect(localStorage.getItem(STORAGE_KEY)).toBe('hi');
+  });
+
+  it('falls back to the default language for an unsupported value', async () => {
+    const user = userEvent.setup();
+    renderProbe();
+
+    await user.click(screen.getByRole('button', { name: 'set unsupported' }));
+
+    expect(screen.getByTestId('lang')).toHaveTextContent('en');
+    expect(localStorage.getItem(STORAGE_KEY)).toBe('en');
   });
 });

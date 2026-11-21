@@ -15,7 +15,7 @@ import { translatePhrase } from '../i18n/phrases.js';
 
 /**
  * @param {object} props
- * @param {object} props.hotspot
+ * @param {import('../types').CityRecord} props.hotspot
  * @param {() => void} props.onNavigateToPlanner
  * @param {() => void} props.onNavigateToHackLab
  */
@@ -271,12 +271,12 @@ export default function SmogShieldDashboard({
               aria-label={chartSummary}
               className="h-44 w-full relative flex items-end justify-between gap-1 pt-6 px-2 bg-slate-50 rounded-2xl border border-slate-200"
             >
-              {diurnalData.map((d, index) => {
+              {diurnalData.map((d) => {
                 const maxPM = 500;
                 const heightPercent = Math.min(100, Math.max(12, (d.pm25 / maxPM) * 100));
                 return (
                   <div
-                    key={index}
+                    key={d.hour}
                     className="flex-1 flex flex-col items-center group relative h-full justify-end"
                   >
                     <div className="absolute -top-16 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity z-20 pointer-events-none p-2 rounded-xl bg-slate-900 text-white shadow-xl text-center whitespace-nowrap min-w-[130px]">
@@ -429,9 +429,9 @@ export default function SmogShieldDashboard({
               {t('dash.directives')}
             </span>
             <ul className="space-y-2.5 list-none p-0 m-0">
-              {profileData.guidelines.map((guide, i) => (
+              {profileData.guidelines.map((guide) => (
                 <li
-                  key={i}
+                  key={guide}
                   className="flex items-start gap-3 p-3.5 rounded-xl bg-white border border-slate-200 text-xs sm:text-sm text-slate-800 shadow-sm"
                 >
                   <CheckCircle2

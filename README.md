@@ -144,12 +144,14 @@ npm run dev                   # http://localhost:5173
 | `npm run preview` | Vite's own preview server. |
 | `npm test` | Vitest unit, integration, component and accessibility suite. |
 | `npm run test:coverage` | Same suite with a coverage report and enforced thresholds. |
-| `npm run lint` | oxlint. |
-| `npm run check` | The full gate: lint + coverage + build + i18n audit + catalogue report. |
+| `npm run lint` | oxlint - configured to report zero errors *and* zero warnings. |
+| `npm run typecheck` | `tsc --noEmit` over the whole `src/` tree (JSDoc types). |
+| `npm run check` | The full gate: lint + typecheck + coverage + build + dist/i18n/catalogue audits. |
 | `npm run audit:i18n` | Checks every catalogue string has a Hindi translation. |
 | `npm run audit:city` | Regenerates city AQI from PM2.5 using the EPA breakpoint table. |
+| `npm run audit:dist` | Scans the built bundle for secrets, CDN links and inline scripts. |
 | `npm run report:catalogue` | Catalogue inventory: AQI/PM2.5 consistency + translation coverage. |
-| `node tests/run_tests.js` | Live-provider connectivity diagnostic (no key required). |
+| `npm run diagnose:provider` | Live-provider connectivity diagnostic (no key required). |
 
 ### Quality gate
 
@@ -158,8 +160,10 @@ npm run dev                   # http://localhost:5173
 | Step | Gate |
 |---|---|
 | `lint` | oxlint reports no error and no warning. |
-| `test:coverage` | 307 tests pass and coverage stays above the floors in `vitest.config.js` (80% statements, 75% branches, 78% functions, 84% lines). |
+| `typecheck` | `tsc` reports no type error across `src/`. |
+| `test:coverage` | 347 tests pass and coverage stays above the floors in `vitest.config.js` (88% statements, 80% branches, 84% functions, 90% lines). |
 | `build` | The production Vite build succeeds. |
+| `audit:dist` | The built bundle contains no key, no CDN script and no inline script. |
 | `audit:i18n` | Every catalogue string has a Hindi translation. |
 | `report:catalogue` | Every city's stored AQI matches its PM2.5, and every catalogue string is translated. |
 
@@ -175,6 +179,7 @@ src/
   App.jsx                     shell, lazy tab routing, state that survives tab switches
   components/                 Navbar, Dashboard, Planner, Scanner, HackLab, ImpactLedger,
                               AssistantChat, Modal, Provenance, ErrorBoundary
+  types.d.ts                  shared domain types (CityRecord, Routine, VisionAudit, ...)
   i18n/
     strings.js                facade over the per-domain UI string table (EN/HI)
     strings/                  app, nav, ai, dash, planner, scanner, hacklab, impact, chat
@@ -197,7 +202,9 @@ server/
 scripts/
   realign-city-aqi.mjs        regenerates city AQI/status from PM2.5
   audit-i18n.mjs              reports catalogue strings with no Hindi translation
+  audit-dist.mjs              scans the built bundle for secrets, CDN links, inline scripts
   report-catalogue.mjs        catalogue inventory and consistency report
+  diagnose-provider.mjs       live-provider connectivity diagnostic (never prints a key)
 tests/
   unit/                       pure logic, security, deployment guard
   components/                 user journeys through the real components
@@ -210,6 +217,12 @@ vercel.json                   Vercel build + rewrite configuration
   implementation lives in focused sub-modules. Every call site keeps working,
   and `tests/unit/deploy.test.js` fails the build if a module under `src/` is
   ever left unreferenced - dead code cannot creep back in.
+- **The source tree is type-checked.** The app is plain JavaScript with JSDoc
+  annotations, and `jsconfig.json` turns on `checkJs` so `npm run typecheck`
+  runs `tsc --noEmit` over all of `src/`. The shared domain shapes live in
+  `src/types.d.ts` and are imported from the components with
+  `import('../types').CityRecord`, so a change to the city catalogue or the
+  routine schema is caught everywhere it is used instead of drifting.
 - **Tailwind CSS is compiled at build time** - no runtime CDN, no flash of
   unstyled content, and a strict Content-Security-Policy without
   `unsafe-inline` for scripts.
@@ -269,7 +282,7 @@ invents live readings or statistics.
 npm test
 ```
 
-The suite is 307 tests across 22 files and covers telemetry and EPA breakpoint
+The suite is 347 tests across 24 files and covers telemetry and EPA breakpoint
 maths, the CR-box and Berkeley Earth models, the indoor mass-balance model,
 input sanitisation (including that Devanagari survives), model-response schema
 validation, provider failover and fallbacks, the proxy's validation, routing
@@ -277,6 +290,25 @@ and rate limiting, secret scanning of both source and `dist/`, bilingual
 coverage of the catalogue, the language provider's switching and persistence,
 and component-level user journeys (navigation, language switching, city search,
 pledges, chat).
+
+**Nothing is mocked below the network boundary.** Component and journey tests
+stub `global.fetch` and let the real transport, the real JSON parser, the real
+schema validator and the real components run - so a test fails when the
+application is broken, not when a mock is stale. `tests/components/AppWorkflows.test.jsx`
+drives the whole shell: the dashboard call-to-action into the planner, the
+generated routine crediting the household's avoided cigarettes and CO2, a pledge
+crediting resilience points, and visited workspaces staying mounted so the user
+never loses their work.
+
+The suite contains **zero skipped tests**, and coverage is a hard gate
+(`vitest.config.js`) rather than a report nobody reads:
+
+| Metric | Floor | Actual |
+|---|---|---|
+| Statements | 88% | 92.8% |
+| Branches | 80% | 85.1% |
+| Functions | 84% | 89.0% |
+| Lines | 90% | 95.1% |
 
 `tests/unit/deploy.test.js` is the deployment guard. It fails the build when
 the repository would break a host:

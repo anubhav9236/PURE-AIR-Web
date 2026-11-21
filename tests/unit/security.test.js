@@ -55,7 +55,7 @@ describe('Secret scanning — browser-delivered source', () => {
   });
 
   for (const pattern of SECRET_PATTERNS) {
-    it('contains no ' + pattern.name, () => {
+    it(`contains no ${pattern.name}`, () => {
       const offenders = [];
       for (const file of files) {
         const content = readFileSync(file, 'utf8');
@@ -87,33 +87,30 @@ describe('Secret scanning — browser-delivered source', () => {
   });
 });
 
-describe('Secret scanning — production build output', () => {
-  const distDir = join(ROOT, 'dist');
+describe('Deployment input — index.html', () => {
+  // These assertions run against the file that is actually deployed, so they
+  // hold whether or not a build has been made yet. The equivalent checks on
+  // the *built* bundle live in `scripts/audit-dist.mjs`, which the quality
+  // gate runs straight after `npm run build`.
+  const html = readFileSync(join(ROOT, 'index.html'), 'utf8');
 
-  it.skipIf(!existsSync(distDir))('contains no secrets in the built bundle', () => {
-    const offenders = [];
-    for (const file of collectFiles(distDir)) {
-      const content = readFileSync(file, 'utf8');
-      for (const { name, regex } of SECRET_PATTERNS) {
-        if (regex.test(content)) {
-          offenders.push(`${relative(ROOT, file)} (${name})`);
-        }
-      }
-    }
-    expect(offenders).toEqual([]);
-  });
-
-  it.skipIf(!existsSync(distDir))('does not load Tailwind from a CDN at runtime', () => {
-    const html = readFileSync(join(distDir, 'index.html'), 'utf8');
+  it('does not load Tailwind from a CDN at runtime', () => {
     expect(html).not.toContain('cdn.tailwindcss.com');
+    expect(html).not.toMatch(/https?:\/\/[^"']*tailwindcss\.com/i);
   });
 
-  it.skipIf(!existsSync(distDir))('ships a Content-Security-Policy meta tag', () => {
-    const html = readFileSync(join(distDir, 'index.html'), 'utf8');
-    expect(html).toMatch(/Content-Security-Policy/);
-    // Scripts must not be allowed from arbitrary origins.
-    const csp = html.match(/content="([^"]*Content-Security[^"]*)"|content="([^"]*default-src[^"]*)"/);
+  it('ships a Content-Security-Policy meta tag', () => {
+    expect(html).toMatch(/Content-Security-Policy/i);
+    const csp = html.match(/content="([^"]*default-src[^"]*)"/i);
     expect(csp).not.toBeNull();
+    // Scripts must not be allowed from arbitrary origins.
+    expect(csp[1]).toMatch(/script-src 'self'/);
+  });
+
+  it('never inlines a key into the HTML shell', () => {
+    for (const { name, regex } of SECRET_PATTERNS) {
+      expect(html, name).not.toMatch(regex);
+    }
   });
 });
 

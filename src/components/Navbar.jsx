@@ -10,9 +10,9 @@ import {
 
 /**
  * @param {object} props
- * @param {object} props.selectedHotspot
- * @param {(city: object) => void} props.onSelectHotspot
- * @param {Array<object>} props.hotspots
+ * @param {import('../types').CityRecord} props.selectedHotspot
+ * @param {(city: import('../types').CityRecord) => void} props.onSelectHotspot
+ * @param {import('../types').CityRecord[]} props.hotspots
  * @param {string} props.activeTab
  * @param {(tab: string) => void} props.setActiveTab
  * @param {number} [props.avoidedCigarettesTotal]
@@ -32,7 +32,12 @@ export default function Navbar({
   const { t, lang, toggleLang } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
   const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false);
-  const [providerStatus, setProviderStatus] = useState({ configured: null, transport: 'none' });
+  /** @type {[import('../types').ProviderStatus, Function]} */
+  const [providerStatus, setProviderStatus] = useState({
+    configured: false,
+    transport: 'none',
+    models: []
+  });
   const [isProviderDialogOpen, setIsProviderDialogOpen] = useState(false);
   const [draftKey, setDraftKey] = useState('');
   const [keyMessage, setKeyMessage] = useState('');
@@ -64,9 +69,15 @@ export default function Navbar({
   // Probe the AI provider once on mount.
   useEffect(() => {
     let cancelled = false;
-    getProviderStatus().then((status) => {
-      if (!cancelled) setProviderStatus(status);
-    });
+    getProviderStatus()
+      .then((status) => {
+        if (!cancelled) setProviderStatus(status);
+        return status;
+      })
+      .catch(() => {
+        // The badge simply stays hidden when the probe fails.
+        return null;
+      });
     return () => {
       cancelled = true;
     };

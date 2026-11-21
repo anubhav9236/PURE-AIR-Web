@@ -3,6 +3,22 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Modal from '../../src/components/Modal.jsx';
 
+/**
+ * A dialog with an outside trigger and a focus target inside the dialog.
+ */
+function Harness() {
+  return (
+    <>
+      <button type="button">outside trigger</button>
+      <Modal open onClose={() => {}} title="Focus test" description="d">
+        <button type="button" data-autofocus>
+          inside
+        </button>
+      </Modal>
+    </>
+  );
+}
+
 describe('Modal', () => {
   it('renders nothing when closed', () => {
     const { container } = render(
@@ -37,19 +53,6 @@ describe('Modal', () => {
   });
 
   it('moves focus into the dialog on open', async () => {
-    function Harness() {
-      return (
-        <>
-          <button type="button">outside trigger</button>
-          <Modal open onClose={() => {}} title="Focus test" description="d">
-            <button type="button" data-autofocus>
-              inside
-            </button>
-          </Modal>
-        </>
-      );
-    }
-
     render(<Harness />);
 
     await waitFor(() => {

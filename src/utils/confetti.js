@@ -10,7 +10,7 @@ export default function triggerConfetti({ particleCount = 50, spread = 60 } = {}
     canvas.style.height = '100vh';
     canvas.style.pointerEvents = 'none';
     canvas.style.zIndex = '9999';
-    document.body.appendChild(canvas);
+    document.body.append(canvas);
 
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
@@ -41,7 +41,7 @@ export default function triggerConfetti({ particleCount = 50, spread = 60 } = {}
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       let alive = false;
 
-      particles.forEach(p => {
+      for (const p of particles) {
         p.x += p.vx;
         p.y += p.vy;
         p.vy += 0.4; // gravity
@@ -58,15 +58,13 @@ export default function triggerConfetti({ particleCount = 50, spread = 60 } = {}
           ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 1.5);
           ctx.restore();
         }
-      });
+      }
 
       frame++;
       if (alive && frame < 90) {
         requestAnimationFrame(render);
       } else {
-        if (canvas.parentNode) {
-          canvas.parentNode.removeChild(canvas);
-        }
+        canvas.remove();
       }
     }
     render();

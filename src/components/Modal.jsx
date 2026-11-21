@@ -60,9 +60,9 @@ export default function Modal({
 
       if (event.key !== 'Tab' || !dialogRef.current) return;
 
-      const focusables = Array.from(
-        dialogRef.current.querySelectorAll(focusableSelector)
-      ).filter((el) => isFocusable(el));
+      const focusables = [
+        ...dialogRef.current.querySelectorAll(focusableSelector)
+      ].filter((el) => isFocusable(el));
 
       if (focusables.length === 0) return;
 
@@ -81,7 +81,7 @@ export default function Modal({
   );
 
   useEffect(() => {
-    if (!open) return undefined;
+    if (!open) return;
 
     previouslyFocused.current = document.activeElement;
 

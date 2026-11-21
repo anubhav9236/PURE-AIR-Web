@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, within, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import IAQHackLab from '../../src/components/IAQHackLab.jsx';
 import LanguageProvider from '../../src/i18n/LanguageProvider.jsx';
@@ -16,6 +16,16 @@ function renderHackLab() {
       <IAQHackLab hotspot={HOTSPOT} />
     </LanguageProvider>
   );
+}
+
+/**
+ * Read the CADR number out of the simulator readout.
+ *
+ * @returns {number}
+ */
+function cadrValue() {
+  const readout = screen.getByText(/CFM CADR/i).previousSibling;
+  return Number(String(readout.textContent).replace(/,/g, ''));
 }
 
 describe('IAQHackLab', () => {
@@ -132,5 +142,54 @@ describe('IAQHackLab', () => {
     const sealed = screen.getByRole('button', { name: /^fully sealed$/i });
     expect(sealed).toHaveAttribute('aria-pressed', 'false');
     expect(within(screen.getByRole('group', { name: /room sealing condition/i })).getAllByRole('button')).toHaveLength(4);
+  });
+
+  it('raises CADR for a higher MERV rating', async () => {
+    const user = userEvent.setup();
+    renderHackLab();
+
+    const before = cadrValue();
+    await user.click(screen.getByRole('button', { name: /MERV 14/i }));
+
+    expect(cadrValue()).toBeGreaterThan(before);
+  });
+
+  it('raises CADR for the five-filter box', async () => {
+    const user = userEvent.setup();
+    renderHackLab();
+
+    const before = cadrValue();
+    await user.click(screen.getByRole('button', { name: /5-filter comp/i }));
+
+    expect(cadrValue()).toBeGreaterThan(before);
+  });
+
+  it('lowers CADR on the low fan setting', async () => {
+    const user = userEvent.setup();
+    renderHackLab();
+
+    const before = cadrValue();
+    await user.click(screen.getByRole('button', { name: /^low$/i }));
+
+    expect(cadrValue()).toBeLessThan(before);
+  });
+
+  it('recomputes the room volume when a dimension changes', () => {
+    renderHackLab();
+
+    fireEvent.change(screen.getByLabelText(/length/i), { target: { value: '30' } });
+
+    // 30 ft x 14 ft x 9 ft = 3,780 cu ft
+    expect(screen.getByText(/3,780 cu ft/)).toBeInTheDocument();
+  });
+
+  it('falls back to zero outdoor PM2.5 when no city is selected', () => {
+    render(
+      <LanguageProvider>
+        <IAQHackLab hotspot={null} />
+      </LanguageProvider>
+    );
+
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/hack lab/i);
   });
 });

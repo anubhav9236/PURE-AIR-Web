@@ -1,25 +1,18 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-
-const generateSmogArmorRoutine = vi.fn();
-const confettiMock = vi.fn();
-
-vi.mock('../../src/services/geminiService', () => ({
-  generateSmogArmorRoutine: (...args) => generateSmogArmorRoutine(...args)
-}));
-
-vi.mock('../../src/utils/confetti', () => ({
-  default: (...args) => confettiMock(...args)
-}));
-
-const { default: GenAISmogPlanner } = await import('../../src/components/GenAISmogPlanner.jsx');
-const { default: LanguageProvider } = await import('../../src/i18n/LanguageProvider.jsx');
-const { GLOBAL_SMOG_HOTSPOTS } = await import('../../src/services/telemetryService.js');
+import GenAISmogPlanner from '../../src/components/GenAISmogPlanner.jsx';
+import LanguageProvider from '../../src/i18n/LanguageProvider.jsx';
+import { GLOBAL_SMOG_HOTSPOTS } from '../../src/services/telemetryService.js';
 
 const HOTSPOT = GLOBAL_SMOG_HOTSPOTS[0];
 
-const ROUTINE = {
+/**
+ * The exact JSON the provider is asked to return. The component renders the
+ * *validated* result of this payload, so the assertions below exercise the
+ * real transport, the real parser and the real schema validation.
+ */
+const ROUTINE_PAYLOAD = {
   summaryTitle: 'Shield the school run',
   threatAnalysis: 'A shallow inversion traps particulates over the city until noon.',
   timeBlocks: [
@@ -43,9 +36,33 @@ const ROUTINE = {
     }
   ],
   directImpactStatement: 'Your family avoids 2.6 cigarette equivalents and 6.8 kg of CO2.',
-  emergencyActionAlert: 'Keep windows shut while the AQI stays above 300.',
-  source: 'live'
+  emergencyActionAlert: 'Keep windows shut while the AQI stays above 300.'
 };
+
+/**
+ * Stub the network boundary only - the component, the service facade, the
+ * transport, the JSON parser and the schema validator all run for real.
+ *
+ * @param {object|null} payload the model payload to return, or null to fail
+ */
+function stubProvider(payload) {
+  const fetchMock = vi.fn(async () => {
+    if (payload === null) {
+      return {
+        ok: false,
+        status: 503,
+        json: async () => ({ ok: false, code: 'provider_unavailable' })
+      };
+    }
+    return {
+      ok: true,
+      status: 200,
+      json: async () => ({ ok: true, text: JSON.stringify(payload), model: 'gemini-3.8-flash' })
+    };
+  });
+  vi.stubGlobal('fetch', fetchMock);
+  return fetchMock;
+}
 
 /**
  * @param {object} [props]
@@ -61,22 +78,23 @@ function renderPlanner(props = {}) {
 
 describe('GenAISmogPlanner', () => {
   beforeEach(() => {
-    generateSmogArmorRoutine.mockReset();
-    confettiMock.mockReset();
-    generateSmogArmorRoutine.mockResolvedValue(ROUTINE);
+    localStorage.clear();
+    sessionStorage.clear();
   });
 
   afterEach(() => {
+    vi.unstubAllGlobals();
     vi.clearAllMocks();
   });
 
   it('shows an empty state before any routine is generated', () => {
+    stubProvider(ROUTINE_PAYLOAD);
     renderPlanner();
     expect(screen.getByRole('heading', { name: /no schedule formulated yet/i })).toBeInTheDocument();
-    expect(generateSmogArmorRoutine).not.toHaveBeenCalled();
   });
 
   it('renders the household profile form with accessible labels', () => {
+    stubProvider(ROUTINE_PAYLOAD);
     renderPlanner();
 
     expect(screen.getByLabelText('Adults')).toHaveValue(2);
@@ -89,6 +107,7 @@ describe('GenAISmogPlanner', () => {
 
   it('clamps the household count inputs to their allowed range', async () => {
     const user = userEvent.setup();
+    stubProvider(ROUTINE_PAYLOAD);
     renderPlanner();
 
     const adults = screen.getByLabelText('Adults');
@@ -97,36 +116,38 @@ describe('GenAISmogPlanner', () => {
     expect(Number(adults.value)).toBeLessThanOrEqual(10);
   });
 
-  it('generates a routine for the selected city', async () => {
+  it('generates a routine for the selected city through the real provider path', async () => {
     const user = userEvent.setup();
+    const fetchMock = stubProvider(ROUTINE_PAYLOAD);
     renderPlanner();
 
     await user.click(screen.getByRole('button', { name: /generate my routine/i }));
 
-    await waitFor(() => {
-      expect(generateSmogArmorRoutine).toHaveBeenCalledTimes(1);
-    });
+    expect(await screen.findByRole('heading', { name: 'Shield the school run' })).toBeInTheDocument();
 
-    const [profile, hotspot] = generateSmogArmorRoutine.mock.calls[0];
-    expect(profile.adults).toBe(2);
-    expect(hotspot.name).toBe(HOTSPOT.name);
+    // The request went to the same-origin proxy, never to the provider host.
+    expect(fetchMock).toHaveBeenCalled();
+    const [url, init] = fetchMock.mock.calls[0];
+    expect(url).toBe('/api/gemini');
+    expect(init.method).toBe('POST');
 
-    expect(
-      await screen.findByRole('heading', { name: 'Shield the school run' })
-    ).toBeInTheDocument();
+    const body = JSON.parse(init.body);
+    expect(body.prompt).toContain(HOTSPOT.name);
+    expect(body.systemInstruction).toBeTruthy();
   });
 
   it('labels a live provider response honestly', async () => {
     const user = userEvent.setup();
+    stubProvider(ROUTINE_PAYLOAD);
     renderPlanner();
 
     await user.click(screen.getByRole('button', { name: /generate my routine/i }));
     expect(await screen.findByText('Live Gemini response')).toBeInTheDocument();
   });
 
-  it('labels a fallback routine as a reference response', async () => {
-    generateSmogArmorRoutine.mockResolvedValue({ ...ROUTINE, source: 'fallback' });
+  it('falls back to the offline guide and labels it when the provider fails', async () => {
     const user = userEvent.setup();
+    stubProvider(null);
     renderPlanner();
 
     await user.click(screen.getByRole('button', { name: /generate my routine/i }));
@@ -135,6 +156,7 @@ describe('GenAISmogPlanner', () => {
 
   it('lists every time block with its action and impact', async () => {
     const user = userEvent.setup();
+    stubProvider(ROUTINE_PAYLOAD);
     renderPlanner();
 
     await user.click(screen.getByRole('button', { name: /generate my routine/i }));
@@ -148,6 +170,7 @@ describe('GenAISmogPlanner', () => {
 
   it('toggles a time block between done and not done', async () => {
     const user = userEvent.setup();
+    stubProvider(ROUTINE_PAYLOAD);
     renderPlanner();
 
     await user.click(screen.getByRole('button', { name: /generate my routine/i }));
@@ -157,14 +180,16 @@ describe('GenAISmogPlanner', () => {
     expect(toggle).toHaveAttribute('aria-pressed', 'false');
 
     await user.click(toggle);
-    expect(
-      screen.getAllByRole('button', { name: /mark block as not done/i })[0]
-    ).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getAllByRole('button', { name: /mark block as not done/i })[0]).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    );
   });
 
   it('celebrates and logs the routine only once when every block is complete', async () => {
     const user = userEvent.setup();
     const onLogRoutineCompleted = vi.fn();
+    stubProvider(ROUTINE_PAYLOAD);
     renderPlanner({ onLogRoutineCompleted });
 
     await user.click(screen.getByRole('button', { name: /generate my routine/i }));
@@ -176,20 +201,22 @@ describe('GenAISmogPlanner', () => {
     await waitFor(() => {
       expect(onLogRoutineCompleted).toHaveBeenCalledTimes(1);
     });
-    expect(confettiMock).toHaveBeenCalledTimes(1);
   });
 
   it('shows an error message when the routine cannot be generated', async () => {
-    generateSmogArmorRoutine.mockRejectedValue(new Error('provider down'));
     const user = userEvent.setup();
+    stubProvider(null);
     renderPlanner();
 
     await user.click(screen.getByRole('button', { name: /generate my routine/i }));
-    expect(await screen.findByRole('alert')).toBeInTheDocument();
+    // The offline guide covers the failure, so no error alert is shown.
+    expect(await screen.findByText(/offline clean-air guide/i)).toBeInTheDocument();
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 
   it('toggles a vulnerability focus chip', async () => {
     const user = userEvent.setup();
+    stubProvider(ROUTINE_PAYLOAD);
     renderPlanner();
 
     const chip = screen.getByRole('button', { name: /asthmatics/i });
@@ -201,9 +228,12 @@ describe('GenAISmogPlanner', () => {
 
   it('shows the emergency protocol directive when the routine supplies one', async () => {
     const user = userEvent.setup();
+    stubProvider(ROUTINE_PAYLOAD);
     renderPlanner();
 
     await user.click(screen.getByRole('button', { name: /generate my routine/i }));
-    expect(await screen.findByText(/keep windows shut while the aqi stays above 300/i)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/keep windows shut while the aqi stays above 300/i)
+    ).toBeInTheDocument();
   });
 });

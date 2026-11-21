@@ -14,10 +14,13 @@
     "test:coverage": "vitest run --coverage",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
+    "typecheck": "tsc -p jsconfig.json",
     "audit:i18n": "node scripts/audit-i18n.mjs",
     "audit:city": "node scripts/realign-city-aqi.mjs",
+    "audit:dist": "node scripts/audit-dist.mjs",
     "report:catalogue": "node scripts/report-catalogue.mjs",
-    "check": "npm run lint && npm run test:coverage && npm run build && npm run audit:i18n && npm run report:catalogue"
+    "diagnose:provider": "node scripts/diagnose-provider.mjs",
+    "check": "npm run lint && npm run typecheck && npm run test:coverage && npm run build && npm run audit:dist && npm run audit:i18n && npm run report:catalogue"
   },
   "dependencies": {
     "lucide-react": "^1.75.0",
@@ -37,6 +40,7 @@
     "jsdom": "^31.0.1",
     "oxlint": "^1.90.0",
     "tailwindcss": "^4.3.5",
+    "typescript": "^7.0.2",
     "vite": "^8.3.6",
     "vitest": "^5.1.1"
   }

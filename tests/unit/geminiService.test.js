@@ -89,7 +89,7 @@ describe('Input sanitisation', () => {
 
   it('returns an empty string for non-string input', () => {
     expect(sanitizeUserInput(null)).toBe('');
-    expect(sanitizeUserInput(undefined)).toBe('');
+    expect(sanitizeUserInput()).toBe('');
     expect(sanitizeUserInput(42)).toBe('');
   });
 
@@ -432,6 +432,6 @@ describe('Image MIME detection', () => {
 
   it('handles missing input safely', () => {
     expect(detectImageMimeType(null)).toBe('image/jpeg');
-    expect(detectImageMimeType(undefined)).toBe('image/jpeg');
+    expect(detectImageMimeType()).toBe('image/jpeg');
   });
 });

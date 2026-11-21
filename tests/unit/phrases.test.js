@@ -115,11 +115,11 @@ describe('No English leaks in Hindi mode', () => {
     const hi = generateDiurnalCurve(290, 'hi');
     const en = generateDiurnalCurve(290, 'en');
     const leaks = [];
-    en.forEach((point, i) => {
+    for (const [i, point] of en.entries()) {
       for (const leak of englishLeaks(point.action, hi[i].action)) {
         leaks.push(`${point.hour}: ${leak}`);
       }
-    });
+    }
     expect(leaks).toEqual([]);
   });
 });

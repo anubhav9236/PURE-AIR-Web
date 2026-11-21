@@ -49,7 +49,7 @@ const INITIAL_PLEDGES = [
 
 /**
  * @param {object} props
- * @param {object} props.hotspot
+ * @param {import('../types').CityRecord} props.hotspot
  * @param {(points?: number) => void} [props.onPledgeCompleted]
  */
 export default function ImpactLedger({ hotspot, onPledgeCompleted }) {
@@ -166,7 +166,10 @@ export default function ImpactLedger({ hotspot, onPledgeCompleted }) {
           </div>
           <div>
             <div className="flex items-baseline gap-2">
-              <span className="text-4xl sm:text-5xl font-black text-slate-900 font-mono">
+              <span
+                data-testid="pm25-per-day"
+                className="text-4xl sm:text-5xl font-black text-slate-900 font-mono"
+              >
                 {berkeleyStats.microgramsAvoided.toLocaleString()}
               </span>
               <span className="text-sm font-bold text-teal-800">µg PM2.5 / {t('impact.perDay')}</span>

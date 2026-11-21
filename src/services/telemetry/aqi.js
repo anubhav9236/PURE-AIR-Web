@@ -7,6 +7,13 @@
 
 import { translatePhrase } from '../../i18n/phrases.js';
 
+/**
+ * Build the modelled 24-hour pollution curve for a city.
+ *
+ * @param {number} basePM25 the city's baseline PM2.5 in µg/m³
+ * @param {import('../../types').Language} [lang] target language
+ * @returns {import('../../types').DiurnalPoint[]}
+ */
 export function generateDiurnalCurve(basePM25, lang = 'en') {
   const curve = [];
   const hourFactors = [
@@ -18,10 +25,10 @@ export function generateDiurnalCurve(basePM25, lang = 'en') {
 
   for (let h = 0; h < 24; h++) {
     const pm25Val = Math.round(basePM25 * hourFactors[h]);
-    let aqiVal = calculateAQIFromPM25(pm25Val);
-    let category = getAQICategory(aqiVal);
-    let isSafeWindow = h >= 12 && h <= 15;
-    let isSeverePeak = (h >= 6 && h <= 9) || (h >= 18 && h <= 20);
+    const aqiVal = calculateAQIFromPM25(pm25Val);
+    const category = getAQICategory(aqiVal);
+    const isSafeWindow = h >= 12 && h <= 15;
+    const isSeverePeak = (h >= 6 && h <= 9) || (h >= 18 && h <= 20);
 
     curve.push({
       hour: `${h.toString().padStart(2, '0')}:00`,
@@ -67,6 +74,13 @@ export function calculateAQIFromPM25(pm25) {
   return 500;
 }
 
+/**
+ * The band an AQI value falls into, with its colour and its advice.
+ *
+ * @param {number} aqi
+ * @param {import('../../types').Language} [lang]
+ * @returns {import('../../types').AqiBand}
+ */
 export function getAQICategory(aqi, lang = 'en') {
   const t = (text) => translatePhrase(text, lang);
   if (aqi <= 50) return { label: t('Good'), color: '#10b981', badge: 'bg-emerald-50 text-emerald-800 border-emerald-200', advice: t('Air quality is satisfactory. Ideal for outdoor family recreation.') };
